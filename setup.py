@@ -9,7 +9,7 @@ from setuptools import setup
 name = 'drf-django-flexible-subscriptions'
 package = 'subscriptions_api'
 description = 'Expose API views for Django Flexible Subscriptions'
-url = 'https://github.com/ydaniels/drf-django-flexible-subscriptio'
+url = 'https://github.com/ydaniels/drf-django-flexible-subscriptions'
 author = 'Yomi Daniels'
 author_email = 'yomid4all@gmail.com'
 license = 'BSD'
