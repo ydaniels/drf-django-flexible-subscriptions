@@ -1,0 +1,4 @@
+site_name: drf-django-flexible-subscriptions
+site_description: Expose API views for Django Flexible Subscriptions
+repo_url: https://github.com/ydaniels/drf-django-flexible-subscriptio
+site_dir: html
