@@ -1,46 +1,51 @@
 language: python
 
 sudo: false
-
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
 env:
-    - TOX_ENV=py36-flake8
-    - TOX_ENV=py36-docs
-    - TOX_ENV=py35-django1.11-drf3.9
-    - TOX_ENV=py35-django1.11-drf3.10
-    - TOX_ENV=py35-django1.11-drf3.11
-    - TOX_ENV=py35-django2.0-drf3.9
-    - TOX_ENV=py35-django2.0-drf3.10
-    - TOX_ENV=py35-django2.0-drf3.11
-    - TOX_ENV=py35-django3.0-drf3.9
-    - TOX_ENV=py35-django3.0-drf3.10
-    - TOX_ENV=py35-django3.0-drf3.11
-    - TOX_ENV=py36-django1.11-drf3.9
-    - TOX_ENV=py36-django1.11-drf3.10
-    - TOX_ENV=py36-django1.11-drf3.11
-    - TOX_ENV=py36-django2.0-drf3.9
-    - TOX_ENV=py36-django2.0-drf3.10
-    - TOX_ENV=py36-django2.0-drf3.11
-    - TOX_ENV=py36-django3.0-drf3.9
-    - TOX_ENV=py36-django3.0-drf3.10
-    - TOX_ENV=py36-django3.0-drf3.11
-    - TOX_ENV=py37-django1.11-drf3.9
-    - TOX_ENV=py37-django1.11-drf3.10
-    - TOX_ENV=py37-django1.11-drf3.11
-    - TOX_ENV=py37-django2.0-drf3.9
-    - TOX_ENV=py37-django2.0-drf3.10
-    - TOX_ENV=py37-django2.0-drf3.11
-    - TOX_ENV=py37-django3.0-drf3.9
-    - TOX_ENV=py37-django3.0-drf3.10
-    - TOX_ENV=py37-django3.0-drf3.11
-    - TOX_ENV=py38-django1.11-drf3.9
-    - TOX_ENV=py38-django1.11-drf3.10
-    - TOX_ENV=py38-django1.11-drf3.11
-    - TOX_ENV=py38-django2.0-drf3.9
-    - TOX_ENV=py38-django2.0-drf3.10
-    - TOX_ENV=py38-django2.0-drf3.11
-    - TOX_ENV=py38-django3.0-drf3.9
-    - TOX_ENV=py38-django3.0-drf3.10
-    - TOX_ENV=py38-django3.0-drf3.11
+    matrix:
+        - TOX_ENV=py36-flake8
+        - TOX_ENV=py36-docs
+        - TOX_ENV=py35-django1.11-drf3.9
+        - TOX_ENV=py35-django1.11-drf3.10
+        - TOX_ENV=py35-django1.11-drf3.11
+        - TOX_ENV=py35-django2.0-drf3.9
+        - TOX_ENV=py35-django2.0-drf3.10
+        - TOX_ENV=py35-django2.0-drf3.11
+        - TOX_ENV=py35-django3.0-drf3.9
+        - TOX_ENV=py35-django3.0-drf3.10
+        - TOX_ENV=py35-django3.0-drf3.11
+        - TOX_ENV=py36-django1.11-drf3.9
+        - TOX_ENV=py36-django1.11-drf3.10
+        - TOX_ENV=py36-django1.11-drf3.11
+        - TOX_ENV=py36-django2.0-drf3.9
+        - TOX_ENV=py36-django2.0-drf3.10
+        - TOX_ENV=py36-django2.0-drf3.11
+        - TOX_ENV=py36-django3.0-drf3.9
+        - TOX_ENV=py36-django3.0-drf3.10
+        - TOX_ENV=py36-django3.0-drf3.11
+        - TOX_ENV=py37-django1.11-drf3.9
+        - TOX_ENV=py37-django1.11-drf3.10
+        - TOX_ENV=py37-django1.11-drf3.11
+        - TOX_ENV=py37-django2.0-drf3.9
+        - TOX_ENV=py37-django2.0-drf3.10
+        - TOX_ENV=py37-django2.0-drf3.11
+        - TOX_ENV=py37-django3.0-drf3.9
+        - TOX_ENV=py37-django3.0-drf3.10
+        - TOX_ENV=py37-django3.0-drf3.11
+        - TOX_ENV=py38-django1.11-drf3.9
+        - TOX_ENV=py38-django1.11-drf3.10
+        - TOX_ENV=py38-django1.11-drf3.11
+        - TOX_ENV=py38-django2.0-drf3.9
+        - TOX_ENV=py38-django2.0-drf3.10
+        - TOX_ENV=py38-django2.0-drf3.11
+        - TOX_ENV=py38-django3.0-drf3.9
+        - TOX_ENV=py38-django3.0-drf3.10
+        - TOX_ENV=py38-django3.0-drf3.11
 
 
 matrix:
