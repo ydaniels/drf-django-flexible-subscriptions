@@ -15,5 +15,5 @@ wheel==0.24.0
 mkdocs==0.11.1
 
 #Main django subscription plan
-django-flexible-subscriptions==0.10.0
+django-flexible-subscriptions>=0.10.0
 
