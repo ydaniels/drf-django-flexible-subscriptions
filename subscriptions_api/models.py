@@ -3,44 +3,6 @@ from django.utils import timezone
 from subscriptions import models
 
 
-class PlanCost(models.PlanCost):
-    """PlanCost Proxy model that includes helper method to create user subscription
-    see https://github.com/studybuffalo/django-flexible-subscriptions/blob/master/subscriptions/views.py#840
-
-    """
-
-    class Meta:
-        proxy = True
-
-    def setup_subscription(self, user, active=True):
-        """Adds subscription to user and adds them to required group if active.
-            Parameters:
-                user (obj): A Django user instance.
-                active (obj): Add user to required group if active.
-            Returns:
-                obj: The newly created UserSubscription instance.
-        """
-        current_date = timezone.now()
-
-        # Add subscription plan to user
-        subscription = models.UserSubscription.objects.create(
-            user=user,
-            subscription=self,
-            date_billing_start=current_date,
-            date_billing_end=None,
-            date_billing_last=current_date,
-            date_billing_next=self.next_billing_datetime(current_date),
-            active=active,
-            cancelled=False,
-        )
-
-        # Add user to the proper group
-        if active:
-            subscription.activate_user_subsciption()
-
-        return subscription
-
-
 class UserSubscription(models.UserSubscription):
     """UserSubscription Proxy model to allow generation of transactions directly"""
 
@@ -67,13 +29,13 @@ class UserSubscription(models.UserSubscription):
             amount=self.subscription.cost,
         )
 
-    def activate_subscription(self):
+    def activate_user_subsciption(self):
         self.active = True
         self.cancelled = False
         self._add_user_to_group()
         self.save()
 
-    def deactivate_subscription(self):
+    def deactivate_user_subsciption(self):
         self.active = False
         self.cancelled = True
         self._remove_user_from_group()
@@ -114,3 +76,42 @@ class UserSubscription(models.UserSubscription):
         """Sends notifiation of a payment success
 
         """
+
+
+class PlanCost(models.PlanCost):
+    """PlanCost Proxy model that includes helper method to create user subscription
+    see https://github.com/studybuffalo/django-flexible-subscriptions/blob/master/subscriptions/views.py#840
+
+    """
+
+    class Meta:
+        proxy = True
+
+    def setup_subscription(self, user, active=True):
+        """Adds subscription to user and adds them to required group if active.
+            Parameters:
+                user (obj): A Django user instance.
+                active (obj): Add user to required group if active.
+            Returns:
+                obj: The newly created UserSubscription instance.
+        """
+        current_date = timezone.now()
+
+        # Add subscription plan to user
+        subscription = UserSubscription.objects.create(
+            user=user,
+            subscription=self,
+            date_billing_start=current_date,
+            date_billing_end=None,
+            date_billing_last=current_date,
+            date_billing_next=self.next_billing_datetime(current_date),
+            active=active,
+            cancelled=False,
+        )
+
+        # Add user to the proper group
+
+        if active:
+            subscription.activate_user_subsciption()
+
+        return subscription
