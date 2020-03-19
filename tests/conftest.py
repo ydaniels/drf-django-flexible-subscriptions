@@ -32,6 +32,8 @@ def pytest_configure():
 
             'rest_framework',
             'rest_framework.authtoken',
+            'subscriptions',
+            'subscriptions_api',
             'tests',
         ),
         PASSWORD_HASHERS=(
@@ -42,6 +44,14 @@ def pytest_configure():
             'django.contrib.auth.hashers.MD5PasswordHasher',
             'django.contrib.auth.hashers.CryptPasswordHasher',
         ),
+        REST_FRAMEWORK={
+            'DEFAULT_AUTHENTICATION_CLASSES': (
+
+
+                'rest_framework.authentication.SessionAuthentication',
+            ),
+
+        }
     )
 
     try:

@@ -18,3 +18,5 @@ local/
 
 !.gitignore
 !.travis.yml
+/venv/
+.idea
