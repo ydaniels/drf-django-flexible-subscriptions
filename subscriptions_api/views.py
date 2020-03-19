@@ -41,7 +41,7 @@ class SubscriptionTransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return UserSubscription.objects.all()
+            return models.SubscriptionTransaction.objects.all()
         return models.SubscriptionTransaction.objects.filter(user=self.request.user)
 
 
