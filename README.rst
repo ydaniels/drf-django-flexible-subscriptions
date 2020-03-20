@@ -1,7 +1,7 @@
 drf-django-flexible-subscriptions
 ======================================
 
-|build-status-image| |pypi-version|
+|build-status-image| |pypi-version| |PythonVersions| |DjangoVersions| |DRFVersions|
 
 Overview
 --------
@@ -147,3 +147,9 @@ To build the documentation:
    :target: http://travis-ci.org/ydaniels/drf-django-flexible-subscriptions?branch=master
 .. |pypi-version| image:: https://img.shields.io/pypi/v/drf-django-flexible-subscriptions.svg
    :target: https://pypi.python.org/pypi/drf-django-flexible-subscriptions
+.. |PythonVersions| image:: https://img.shields.io/badge/python-3.6%7C3.7%7C3.8-blue
+   :alt: PyPI - Python Version
+.. |DjangoVersions| image:: https://img.shields.io/badge/django-2.0%7C2.1%7C2.2%7C3.0-blue
+   :alt: Django Version
+.. |DRFVersions| image:: https://img.shields.io/badge/drf-3.9%7C3.10%7C3.11-blue
+   :alt: DRF Version
