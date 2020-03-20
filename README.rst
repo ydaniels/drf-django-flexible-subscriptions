@@ -11,9 +11,9 @@ Expose API views for Django Flexible Subscriptions
 Requirements
 ------------
 
--  Python (2.7, 3.3, 3.4)
--  Django (1.6, 1.7, 1.8)
--  Django REST Framework (2.4, 3.0, 3.1)
+-  Python (3.6, 3.7, 3.8)
+-  Django (2.0, 2.1, 2.2, 3.0)
+-  Django REST Framework (3.9, 3.10, 3.11)
 
 Installation
 ------------
@@ -26,8 +26,75 @@ Install using ``pip``\ …
 
 Example
 -------
+To use in
+   *settings.py*
 
-TODO: Write example.
+.. code:: python
+
+    INSTALLED_APPS = [
+                        ...,
+                        'rest_framework',
+                        'subscriptions',
+                        'subscriptions_api',
+                        ]
+
+*urls.py**
+
+.. code-block:: python
+
+        url(r'^api/subscriptions/', include('subscriptions_api.urls')),
+
+This will expose the following **django-flexible-subscriptions** endpoints with only read access for normal user and write access for admin
+ - api/subscriptions/plan-tags/
+ - api/subscriptions/plan-costs/
+ - api/subscriptions/planlist-details/
+ - api/subscriptions/planlist/
+ - api/subscriptions/subscription-plans/
+ - api/subscriptions/subscription-transactions/
+ - api/subscriptions/user-subscriptions/
+
+For subscribing user to a plan **drf-django-flexible-subscriptions** provides few helper method through a proxy model to the main  django-flexible-subscriptions  **PlanCost** and **UserSubscriptions** models, so you can implement your payment logic in any way you want without binding to a specific view e.g
+
+*models.py*
+
+.. code-block:: python
+
+     from subscriptions_api.models import PlanCost, UserSubscription
+
+     class PaymentModel(models.Model):
+          cost = models.ForeignKey(PlanCost, null=True, on_delete=models.SET_NULL)
+
+*views.py*
+
+.. code-block:: python
+
+    #you can subscribe user to a plan by
+    subscription = cost.setup_user_subscription(request.user, active=False, no_multipe_subscription=True)
+
+    #with active=False user subscription would not be activated immediately use active=True for otherwise
+
+    #no_multiple_sub prevents user from being subscribed to more than one plan at time previous plan will be removed
+
+    #After successful user payment you can activate_subscription by using subscription above from setup or
+
+    subscription = UserSubscription.objects.get(user=request.user)
+
+    #or for user with multiple active subscription when no_multipe_sub=False
+
+    subscription = UserSubscription.objects.get(user=request.user, cost=cost)
+
+    subscription.activate_user_subscription() #Activate  subscription
+
+    #deactivate subscription with
+
+    subscription.deactivate_user_subscription()
+
+    #You can also record transaction
+
+    subscription.record_transaction()
+
+
+
 
 Testing
 -------
@@ -76,7 +143,7 @@ To build the documentation:
 
 .. _tox: http://tox.readthedocs.org/en/latest/
 
-.. |build-status-image| image:: https://secure.travis-ci.org/ydaniels/drf-django-flexible-subscriptio.svg?branch=master
-   :target: http://travis-ci.org/ydaniels/drf-django-flexible-subscriptio?branch=master
+.. |build-status-image| image:: https://secure.travis-ci.org/ydaniels/drf-django-flexible-subscriptions.svg?branch=master
+   :target: http://travis-ci.org/ydaniels/drf-django-flexible-subscriptions?branch=master
 .. |pypi-version| image:: https://img.shields.io/pypi/v/drf-django-flexible-subscriptions.svg
    :target: https://pypi.python.org/pypi/drf-django-flexible-subscriptions

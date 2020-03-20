@@ -13,10 +13,29 @@ class PlanTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PlanListDetailSerializer(serializers.ModelSerializer):
+    """PlanListDetail serializer"""
+
+    class Meta:
+        model = models.PlanListDetail
+        fields = '__all__'
+
+
+class PlanListSerializer(serializers.ModelSerializer):
+    """PlanList serializer"""
+    plan_list_details = PlanListDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.PlanList
+        fields = '__all__'
+
+
 class PlanCostSerializer(serializers.ModelSerializer):
     """PlanCost model serializer with property fields  exposed as serializer method fields"""
     recurrent_unit_text = serializers.SerializerMethodField()
     billing_frequency_text = serializers.SerializerMethodField()
+    subscriptions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    transactions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     def get_recurrent_unit_text(self, obj):
         return obj.display_recurrent_unit_text
@@ -35,6 +54,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     tags = PlanTagSerializer(many=True, read_only=True)
     tags_str = serializers.SerializerMethodField()
     costs = PlanCostSerializer(many=True, read_only=True)
+    plan_list_details = PlanListDetailSerializer(many=True, read_only=True)
 
     def get_tags_str(self, obj):
         return obj.display_tags()
@@ -57,20 +77,4 @@ class SubscriptionTransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.SubscriptionTransaction
-        fields = '__all__'
-
-
-class PlanListSerializer(serializers.ModelSerializer):
-    """PlanList serializer"""
-
-    class Meta:
-        model = models.PlanList
-        fields = '__all__'
-
-
-class PlanListDetailSerializer(serializers.ModelSerializer):
-    """PlanListDetail serializer"""
-
-    class Meta:
-        model = models.PlanListDetail
         fields = '__all__'

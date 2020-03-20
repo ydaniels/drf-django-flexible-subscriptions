@@ -29,13 +29,13 @@ class UserSubscription(models.UserSubscription):
             amount=self.subscription.cost,
         )
 
-    def activate_user_subsciption(self):
+    def activate_user_subscription(self):
         self.active = True
         self.cancelled = False
         self._add_user_to_group()
         self.save()
 
-    def deactivate_user_subsciption(self):
+    def deactivate_user_subscription(self):
         self.active = False
         self.cancelled = True
         self._remove_user_from_group()
@@ -87,14 +87,22 @@ class PlanCost(models.PlanCost):
     class Meta:
         proxy = True
 
-    def setup_subscription(self, user, active=True):
+    def setup_user_subscription(self, user, active=True, no_multipe_subscription=True, del_multipe_subscription=False):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.
                 active (obj): Add user to required group if active.
+                no_multipe_sub (bool) :  Only allow one subscription for a user at a time by removing user old subscriptions
             Returns:
                 obj: The newly created UserSubscription instance.
         """
+        if no_multipe_subscription:
+            previous_subscriptions = UserSubscription.objects.filter(user=user).all()
+            for sub in previous_subscriptions:
+                sub.deactivate_user_subscription()
+                if del_multipe_subscription:
+                    sub.delete()
+
         current_date = timezone.now()
 
         # Add subscription plan to user
@@ -112,6 +120,6 @@ class PlanCost(models.PlanCost):
         # Add user to the proper group
 
         if active:
-            subscription.activate_user_subsciption()
+            subscription.activate_user_subscription()
 
         return subscription
