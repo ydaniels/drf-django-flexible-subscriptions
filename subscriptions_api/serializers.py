@@ -13,29 +13,10 @@ class PlanTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PlanListDetailSerializer(serializers.ModelSerializer):
-    """PlanListDetail serializer"""
-
-    class Meta:
-        model = models.PlanListDetail
-        fields = '__all__'
-
-
-class PlanListSerializer(serializers.ModelSerializer):
-    """PlanList serializer"""
-    plan_list_details = PlanListDetailSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = models.PlanList
-        fields = '__all__'
-
-
 class PlanCostSerializer(serializers.ModelSerializer):
     """PlanCost model serializer with property fields  exposed as serializer method fields"""
     recurrent_unit_text = serializers.SerializerMethodField()
     billing_frequency_text = serializers.SerializerMethodField()
-    subscriptions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    transactions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     def get_recurrent_unit_text(self, obj):
         return obj.display_recurrent_unit_text
@@ -54,13 +35,38 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     tags = PlanTagSerializer(many=True, read_only=True)
     tags_str = serializers.SerializerMethodField()
     costs = PlanCostSerializer(many=True, read_only=True)
-    plan_list_details = PlanListDetailSerializer(many=True, read_only=True)
 
     def get_tags_str(self, obj):
         return obj.display_tags()
 
     class Meta:
         model = models.SubscriptionPlan
+        fields = '__all__'
+
+
+class PlanListDetailSerializer(serializers.ModelSerializer):
+    """PlanListDetail serializer"""
+    plan = SubscriptionPlanSerializer()
+
+    class Meta:
+        model = models.PlanListDetail
+        fields = '__all__'
+
+    def to_internal_value(self, data):
+        self.fields['plan'] = serializers.PrimaryKeyRelatedField(queryset=models.SubscriptionPlan.objects.all())
+        return super(PlanListDetailSerializer, self).to_internal_value(data)
+
+    def to_representation(self, obj):
+        self.fields['plan'] = SubscriptionPlanSerializer()
+        return super(PlanListDetailSerializer, self).to_representation(obj)
+
+
+class PlanListSerializer(serializers.ModelSerializer):
+    """PlanList serializer"""
+    plan_list_details = PlanListDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.PlanList
         fields = '__all__'
 
 

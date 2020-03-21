@@ -171,7 +171,7 @@ class BaseTest(APITestCase):
         self.client.force_authenticate(self.admin_user)
         r = self.client.post(plan_list_detail_url, data=plan_list_detail_data)
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(r.data['plan'], plan_list_detail_data['plan'])
+        self.assertEqual(r.data['plan']['id'], str(plan_list_detail_data['plan']))
 
     def test_user_can_only_read_planlist_detail(self):
         plan_list = PlanList(title='Bi Weekly Plans')
