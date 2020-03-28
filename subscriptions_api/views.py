@@ -19,7 +19,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
 
-class PlanCostSerializerViewSet(viewsets.ModelViewSet):
+class PlanCostViewSet(viewsets.ModelViewSet):
     queryset = PlanCost.objects.all()
     serializer_class = serializers.PlanCostSerializer
     permission_classes = (IsAdminOrReadOnly,)
