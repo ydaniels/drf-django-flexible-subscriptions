@@ -8,6 +8,7 @@ from subscriptions_api.app_settings import SETTINGS
 
 class UserSubscription(models.UserSubscription):
     """UserSubscription Proxy model to allow generation of transactions directly"""
+    SubscriptionTransactionClass = models.SubscriptionTransaction
 
     class Meta:
         proxy = True
@@ -25,7 +26,7 @@ class UserSubscription(models.UserSubscription):
         if transaction_date is None:
             transaction_date = timezone.now()
 
-        return models.SubscriptionTransaction.objects.create(
+        return self.SubscriptionTransactionClass.objects.create(
             user=self.user,
             subscription=self.subscription,
             date_transaction=transaction_date,
@@ -143,6 +144,7 @@ class PlanCost(models.PlanCost):
     see https://github.com/studybuffalo/django-flexible-subscriptions/blob/master/subscriptions/views.py#840
 
     """
+    UserSubscriptionClass = UserSubscription
 
     class Meta:
         proxy = True
@@ -157,7 +159,7 @@ class PlanCost(models.PlanCost):
                 obj: The newly created UserSubscription instance.
         """
         if no_multipe_subscription:
-            previous_subscriptions = UserSubscription.objects.filter(user=user).all()
+            previous_subscriptions = self.UserSubscriptionClass.objects.filter(user=user).all()
             for sub in previous_subscriptions:
                 sub.deactivate()
                 if del_multipe_subscription:
