@@ -159,7 +159,7 @@ class PlanCost(models.PlanCost):
                 obj: The newly created UserSubscription instance.
         """
         if no_multipe_subscription:
-            previous_subscriptions = self.UserSubscriptionClass.objects.filter(user=user).all()
+            previous_subscriptions = self.UserSubscriptionClass.objects.filter(user=user, active=True).all()
             for sub in previous_subscriptions:
                 sub.deactivate()
                 if del_multipe_subscription:
