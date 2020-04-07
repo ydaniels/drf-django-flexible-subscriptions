@@ -1,4 +1,7 @@
+from datetime import timedelta
 import importlib
+
+
 from django.utils import timezone
 
 from subscriptions import models
@@ -65,17 +68,19 @@ class UserSubscription(models.UserSubscription):
 
     def activate(self, subscription_date=None):
         current_date = subscription_date or timezone.now()
+        next_billing_date = self.subscription.next_billing_datetime(current_date)
         self.active = True
         self.cancelled = False
         self.date_billing_start = current_date
-        self.date_billing_end = None
-        self.date_billing_last = current_date
-        self.date_billing_next = self.subscription.next_billing_datetime(current_date)
+        self.date_billing_end = next_billing_date + timedelta(days=self.subscription.plan.grace_period)
+        self.date_billing_next = next_billing_date
         self._add_user_to_group()
         self.save()
 
     def deactivate(self):
+        current_date = timezone.now()
         self.active = False
+        self.date_billing_last = current_date
         self.cancelled = True
         self._remove_user_from_group()
         self.save()

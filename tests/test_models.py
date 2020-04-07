@@ -58,11 +58,15 @@ class TestProxyModel(TestCase):
     def test_can_activate_user_subscription_directly_custom_date(self):
         plan_name = 'Custom Extended Plan'
         cost = self.create_subscription_plan(plan_name)
+        grace_period_days = 2
+        cost.plan.grace_period = grace_period_days
+        cost.plan.save()
         date = timezone.now() - timedelta(days=30)
         subscription = cost.setup_user_subscription(self.user, active=False)
         subscription.activate(subscription_date=date)
         self.assertEqual(subscription.date_billing_start, date)
         self.assertEqual(subscription.date_billing_next, cost.next_billing_datetime(date))
+        self.assertEqual(subscription.date_billing_end, cost.next_billing_datetime(date) + timedelta(grace_period_days))
 
     def test_can_activate_user_subscription_directly(self):
         plan_name = 'Extended Plan'
