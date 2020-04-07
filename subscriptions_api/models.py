@@ -26,11 +26,14 @@ class UserSubscription(models.UserSubscription):
         if transaction_date is None:
             transaction_date = timezone.now()
 
+        if amount is None:
+            amount = self.subscription.cost
+
         return self.SubscriptionTransactionClass.objects.create(
             user=self.user,
             subscription=self.subscription,
             date_transaction=transaction_date,
-            amount=amount or self.subscription.cost,
+            amount=amount,
         )
 
     @property
@@ -41,7 +44,7 @@ class UserSubscription(models.UserSubscription):
         current_date = timezone.now()
         if self.date_billing_next > current_date:
             days_left = (self.date_billing_next - current_date).days
-            return round(days_left * self.subscription.daily_cost, 2)
+            return round(days_left * self.plan_cost.daily_cost, 2)
         return 0
 
     @property
@@ -52,8 +55,13 @@ class UserSubscription(models.UserSubscription):
         current_date = timezone.now()
         if current_date > self.date_billing_start:
             days_used = (current_date - self.date_billing_start).days
-            return round(days_used * self.subscription.daily_cost, 2)
+            return round(days_used * self.plan_cost.daily_cost, 2)
         return 0
+
+    @property
+    def plan_cost(self):
+        cost = PlanCost.objects.get(pk=self.subscription.pk)
+        return cost
 
     def activate(self, subscription_date=None):
         current_date = subscription_date or timezone.now()
