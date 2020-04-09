@@ -162,7 +162,7 @@ class PlanCost(models.PlanCost):
     class Meta:
         proxy = True
 
-    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False, del_multipe_subscription=False):
+    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False, del_multipe_subscription=False, resuse=False):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.
@@ -179,13 +179,19 @@ class PlanCost(models.PlanCost):
                     sub.delete()
 
         # Add subscription plan to user
-        subscription = UserSubscription.objects.create(
-            user=user,
-            subscription=self,
-            active=active,
-            cancelled=False
-        )
-
+        subscription = None
+        if resuse:
+            try:
+                subscription = self.UserSubscriptionClass.objects.get(user=user, subscription=self)
+            except UserSubscription.DoesNotExist:
+                pass
+        if not subscription:
+            subscription = self.UserSubscriptionClass.objects.create(
+                user=user,
+                subscription=self,
+                active=active,
+                cancelled=False
+            )
         # Add user to the proper group
 
         if active:
