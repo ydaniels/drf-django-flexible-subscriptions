@@ -119,37 +119,37 @@ class UserSubscription(models.UserSubscription):
         """Sends notification of processing subscription.
 
         """
-        return self.notify('notify_processing_manager')
+        return self.notify('notify_processing')
 
     def notify_expired(self):
         """Sends notification of expired subscription.
 
         """
-        return self.notify('notify_expired_manager')
+        return self.notify('notify_expired')
 
     def notify_overdue(self):
         """Sends notification of overdue subscription.
 
         """
-        return self.notify('notify_overdue_manager')
+        return self.notify('notify_overdue')
 
     def notify_new(self):
         """Sends notification of newly active subscription
 
         """
-        return self.notify('notify_new_manager')
+        return self.notify('notify_new')
 
     def notify_payment_error(self):
         """Sends notification of a payment error
 
         """
-        return self.notify('notify_payment_error_manager')
+        return self.notify('notify_payment_error')
 
     def notify_payment_success(self):
         """Sends notifiation of a payment success
 
         """
-        return self.notify('notify_payment_success_manager')
+        return self.notify('notify_payment_success')
 
 
 class PlanCost(models.PlanCost):
