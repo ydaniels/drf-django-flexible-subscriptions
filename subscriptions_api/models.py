@@ -1,7 +1,6 @@
 from datetime import timedelta
 import importlib
 
-
 from django.utils import timezone
 
 from subscriptions import models
@@ -101,7 +100,7 @@ class UserSubscription(models.UserSubscription):
             # No group available to add user to
             pass
 
-    def notify(self, notifier):
+    def notify(self, notifier, **kwargs):
         """
         param notififer: notifie class that takes usersubscription object and has a send method
         """
@@ -111,45 +110,45 @@ class UserSubscription(models.UserSubscription):
             importlib.import_module(SETTINGS[notifier]['module']),
             SETTINGS[notifier]['class']
         )
-        notify_obj = Notify(self, notifier)
+        notify_obj = Notify(self, notifier, **kwargs)
         notify_obj.send()
         return notify_obj
 
-    def notify_processing(self):
+    def notify_processing(self, **kwargs):
         """Sends notification of processing subscription.
 
         """
-        return self.notify('notify_processing')
+        return self.notify('notify_processing', **kwargs)
 
-    def notify_expired(self):
+    def notify_expired(self, **kwargs):
         """Sends notification of expired subscription.
 
         """
-        return self.notify('notify_expired')
+        return self.notify('notify_expired', **kwargs)
 
-    def notify_overdue(self):
+    def notify_overdue(self, **kwargs):
         """Sends notification of overdue subscription.
 
         """
-        return self.notify('notify_overdue')
+        return self.notify('notify_overdue', **kwargs)
 
-    def notify_new(self):
+    def notify_new(self, **kwargs):
         """Sends notification of newly active subscription
 
         """
-        return self.notify('notify_new')
+        return self.notify('notify_new', **kwargs)
 
-    def notify_payment_error(self):
+    def notify_payment_error(self, **kwargs):
         """Sends notification of a payment error
 
         """
-        return self.notify('notify_payment_error')
+        return self.notify('notify_payment_error', **kwargs)
 
-    def notify_payment_success(self):
+    def notify_payment_success(self, **kwargs):
         """Sends notifiation of a payment success
 
         """
-        return self.notify('notify_payment_success')
+        return self.notify('notify_payment_success', **kwargs)
 
 
 class PlanCost(models.PlanCost):
@@ -162,7 +161,8 @@ class PlanCost(models.PlanCost):
     class Meta:
         proxy = True
 
-    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False, del_multipe_subscription=False, resuse=False):
+    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False,
+                                del_multipe_subscription=False, resuse=False):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.

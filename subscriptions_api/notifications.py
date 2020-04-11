@@ -4,8 +4,9 @@ from django.core.mail import EmailMultiAlternatives
 class EmailNotification:
     """A simple class to send email notification from subscription"""
 
-    def __init__(self, subscription, notification):
+    def __init__(self, subscription, notification, **kwargs):
         self.subscription = subscription
+        self.kwargs = kwargs
         self.notification = notification
         self.msg = EmailMultiAlternatives(
             subject=self.get_subject(),
