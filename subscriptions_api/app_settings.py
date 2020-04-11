@@ -39,11 +39,23 @@ def compile_settings():
     )
     subscribe_notify_payment_success_class = string_to_module_and_class(subscribe_notify_payment_success)
 
+    subscribe_notify_activate = getattr(
+        settings, 'DFS_NOTIFY_ACTIVATE', 'subscriptions_api.notifications.EmailNotification'
+    )
+    subscribe_notify_activate_class = string_to_module_and_class(subscribe_notify_activate)
+
+    subscribe_notify_deactivate = getattr(
+        settings, 'DFS_NOTIFY_DEACTIVATE', 'subscriptions_api.notifications.EmailNotification'
+    )
+    subscribe_notify_deactivate_class = string_to_module_and_class(subscribe_notify_deactivate)
+
     return {
         'notify_processing': subscribe_notify_processing_class,
         'notify_expired': subscribe_notify_expired_class,
         'notify_overdue': subscribe_notify_overdue_class,
         'notify_new': subscribe_notify_new_class,
+        'notify_activate': subscribe_notify_activate_class,
+        'notify_deactivate': subscribe_notify_deactivate_class,
         'notify_payment_error': subscribe_notify_payment_error_class,
         'notify_payment_success': subscribe_notify_payment_success_class,
     }

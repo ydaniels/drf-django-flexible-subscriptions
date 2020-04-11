@@ -133,10 +133,22 @@ class UserSubscription(models.UserSubscription):
         return self.notify('notify_overdue', **kwargs)
 
     def notify_new(self, **kwargs):
-        """Sends notification of newly active subscription
+        """Sends notification of new subscription
 
         """
         return self.notify('notify_new', **kwargs)
+
+    def notify_activate(self, **kwargs):
+        """Sends notification of activated subscription
+
+        """
+        return self.notify('notify_activate', **kwargs)
+
+    def notify_deactivate(self, **kwargs):
+        """Sends notification of deactivated subscription
+
+        """
+        return self.notify('notify_deactivate', **kwargs)
 
     def notify_payment_error(self, **kwargs):
         """Sends notification of a payment error
