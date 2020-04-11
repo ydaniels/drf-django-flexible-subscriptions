@@ -40,12 +40,12 @@ def compile_settings():
     subscribe_notify_payment_success_class = string_to_module_and_class(subscribe_notify_payment_success)
 
     return {
-        'notify_processing_manager': subscribe_notify_processing_class,
-        'notify_expired_manager': subscribe_notify_expired_class,
-        'notify_overdue_manager': subscribe_notify_overdue_class,
-        'notify_new_manager': subscribe_notify_new_class,
-        'notify_payment_error_manager': subscribe_notify_payment_error_class,
-        'notify_payment_success_manager': subscribe_notify_payment_success_class,
+        'notify_processing': subscribe_notify_processing_class,
+        'notify_expired': subscribe_notify_expired_class,
+        'notify_overdue': subscribe_notify_overdue_class,
+        'notify_new': subscribe_notify_new_class,
+        'notify_payment_error': subscribe_notify_payment_error_class,
+        'notify_payment_success': subscribe_notify_payment_success_class,
     }
 
 

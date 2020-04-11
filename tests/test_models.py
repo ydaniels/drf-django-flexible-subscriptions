@@ -160,7 +160,7 @@ class TestProxyModel(TestCase):
         cost = self.create_subscription_plan('Cool Limited Spot', recurrence_unit=MONTH, cost=100)
         subscription = cost.setup_user_subscription(user=self.user, active=True)
         notify = subscription.notify_processing()
-        self.assertEqual(notify.notification, 'notify_processing_manager')
+        self.assertEqual(notify.notification, 'notify_processing')
 
     def test_user_no_multiple_subscriptions_allowed(self):
         plan_name = 'Fake Plan 1'
