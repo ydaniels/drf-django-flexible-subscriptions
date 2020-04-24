@@ -5,7 +5,7 @@ from django.utils import timezone
 from subscriptions_api.app_settings import SETTINGS
 
 """Models Gotten from the Flexible Subscriptions app.
-    https://github.com/studybuffalo/django-flexible-subscriptions/blob/master/subscriptions/models.py with minor changes
+    with minor changes
 """
 from datetime import timedelta
 from uuid import uuid4
@@ -525,6 +525,7 @@ class SubscriptionTransaction(models.Model):
     subscription = models.ForeignKey(
         UserSubscription,
         help_text=_('the Subscription that were billed'),
+        null=True,
         on_delete=models.SET_NULL,
         related_name='transactions'
     )
