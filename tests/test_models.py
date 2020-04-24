@@ -4,13 +4,13 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 import pytest
 
-from subscriptions.models import SubscriptionPlan, SubscriptionTransaction, DAY, MONTH, WEEK, YEAR
-from subscriptions_api.models import PlanCost, UserSubscription
+from subscriptions_api.models import SubscriptionPlan, SubscriptionTransaction, PlanCost, UserSubscription, DAY, MONTH, WEEK, YEAR
 
 pytestmark = pytest.mark.django_db
 
 
-class TestProxyModel(TestCase):
+@pytestmark
+class TestSubscriptionModel(TestCase):
 
     def setUp(self):
         username = 'api_user'
@@ -27,9 +27,9 @@ class TestProxyModel(TestCase):
         plan_name = 'Standard Plan'
         cost = self.create_subscription_plan(plan_name)
         cost.setup_user_subscription(self.user, active=True)
-        active_subscription = self.user.subscriptions.get(subscription__plan__plan_name=plan_name)
+        active_subscription = self.user.subscriptions.get(plan_cost=cost)
         subscription = UserSubscription.objects.get(user=self.user)
-        self.assertEqual(active_subscription.subscription, cost)
+        self.assertEqual(active_subscription.plan_cost, cost)
         self.assertEqual(active_subscription, subscription)
         self.assertTrue(active_subscription.active)
         self.assertFalse(active_subscription.cancelled)
@@ -40,16 +40,16 @@ class TestProxyModel(TestCase):
         date = timezone.now() + timedelta(days=8)
         cost = self.create_subscription_plan(plan_name)
         cost.setup_user_subscription(self.user, active=True, subscription_date=date)
-        active_subscription = self.user.subscriptions.get(subscription__plan__plan_name=plan_name)
+        active_subscription = self.user.subscriptions.get(plan_cost=cost)
         self.assertEqual(active_subscription.date_billing_start, date)
 
     def test_can_setup_inactive_subscription(self):
         plan_name = 'Basic Plan'
         cost = self.create_subscription_plan(plan_name)
         cost.setup_user_subscription(self.user, active=False)
-        active_subscription = self.user.subscriptions.get(subscription__plan__plan_name=plan_name)
+        active_subscription = self.user.subscriptions.get(plan_cost=cost)
         subscription = UserSubscription.objects.get(user=self.user)
-        self.assertEqual(active_subscription.subscription, cost)
+        self.assertEqual(active_subscription.plan_cost, cost)
         self.assertEqual(active_subscription, subscription)
         self.assertFalse(active_subscription.active)
         self.assertFalse(active_subscription.cancelled)
@@ -72,7 +72,7 @@ class TestProxyModel(TestCase):
         plan_name = 'Extended Plan'
         cost = self.create_subscription_plan(plan_name)
         cost.setup_user_subscription(self.user, active=False)
-        active_subscription = self.user.subscriptions.get(subscription__plan__plan_name=plan_name)
+        active_subscription = self.user.subscriptions.get(plan_cost=cost)
         subscription = UserSubscription.objects.get(user=self.user)
         self.assertFalse(active_subscription.active)
         self.assertEqual(active_subscription, subscription)
@@ -86,7 +86,7 @@ class TestProxyModel(TestCase):
         plan_name = 'Cool Plan'
         cost = self.create_subscription_plan(plan_name)
         cost.setup_user_subscription(self.user, active=True)
-        active_subscription = self.user.subscriptions.get(subscription__plan__plan_name=plan_name)
+        active_subscription = self.user.subscriptions.get(plan_cost=cost)
         subscription = UserSubscription.objects.get(user=self.user)
         self.assertTrue(active_subscription.active)
         self.assertTrue(self.user.groups.filter(name=cost.plan.group.name).exists())
@@ -104,7 +104,7 @@ class TestProxyModel(TestCase):
         subscription = cost.setup_user_subscription(self.user, active=True)
         subscription.record_transaction()
         transaction_exist = SubscriptionTransaction.objects.filter(user=self.user,
-                                                                   subscription=subscription.subscription).exists()
+                                                                   subscription=subscription).exists()
         self.assertTrue(transaction_exist)
 
     def test_daily_day_cost(self):
@@ -175,12 +175,24 @@ class TestProxyModel(TestCase):
     def test_user_only_allowed_single_subscription_at_a_time(self):
         plan_name = 'Fake Plan 3'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, del_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+                                     del_multipe_subscription=True)
         plan_name = 'Fake Plan 4'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, del_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+                                     del_multipe_subscription=True)
         subscriptions_count = UserSubscription.objects.filter(user=self.user).count()
         self.assertEqual(subscriptions_count, 1)
+
+    def test_subscription_reused(self):
+        plan_name = 'Fake Plan 3'
+        cost = self.create_subscription_plan(plan_name)
+        subscription = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+                                                    del_multipe_subscription=True)
+        subscription_2 = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True)
+        self.assertNotEqual(subscription, subscription_2)
+        subscription_3 = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
+        self.assertEqual(subscription, subscription_3)
 
     def tearDown(self):
         self.user.delete()

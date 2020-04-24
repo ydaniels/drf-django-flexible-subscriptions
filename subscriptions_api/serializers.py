@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from subscriptions import models
+from subscriptions_api import models
 
 from .models import PlanCost, UserSubscription
 
@@ -70,17 +70,18 @@ class PlanListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSubscriptionSerializer(serializers.ModelSerializer):
-    """User subscription model serializer"""
-
-    class Meta:
-        model = UserSubscription
-        fields = '__all__'
-
-
 class SubscriptionTransactionSerializer(serializers.ModelSerializer):
     """SubscriptionTransaction serializer"""
 
     class Meta:
         model = models.SubscriptionTransaction
+        fields = '__all__'
+
+
+class UserSubscriptionSerializer(serializers.ModelSerializer):
+    """User subscription model serializer"""
+    transactions = SubscriptionTransactionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserSubscription
         fields = '__all__'

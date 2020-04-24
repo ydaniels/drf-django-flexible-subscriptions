@@ -29,12 +29,8 @@ def pytest_configure():
             'django.contrib.sites',
             'django.contrib.messages',
             'django.contrib.staticfiles',
-
             'rest_framework',
-            'rest_framework.authtoken',
-            'subscriptions',
-            'subscriptions_api',
-            'tests',
+            'subscriptions_api'
         ),
         PASSWORD_HASHERS=(
             'django.contrib.auth.hashers.SHA1PasswordHasher',

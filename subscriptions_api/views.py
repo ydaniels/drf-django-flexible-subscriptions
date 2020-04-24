@@ -1,9 +1,8 @@
 from rest_framework import viewsets
 
-from subscriptions import models
-from subscriptions_api import serializers
 
-from .models import PlanCost, UserSubscription
+from subscriptions_api import serializers, models
+
 from .permissions import IsAdminOrReadOnly
 
 
@@ -20,7 +19,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
 
 
 class PlanCostViewSet(viewsets.ModelViewSet):
-    queryset = PlanCost.objects.all()
+    queryset = models.PlanCost.objects.all()
     serializer_class = serializers.PlanCostSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -31,8 +30,8 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return UserSubscription.objects.all()
-        return UserSubscription.objects.filter(user=self.request.user)
+            return models.UserSubscription.objects.all()
+        return models.UserSubscription.objects.filter(user=self.request.user)
 
 
 class SubscriptionTransactionViewSet(viewsets.ModelViewSet):

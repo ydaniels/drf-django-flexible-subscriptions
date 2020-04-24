@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth.models import User
 
-from subscriptions.models import PlanCost, SubscriptionPlan, PlanList
+from subscriptions_api.models import PlanCost, SubscriptionPlan, PlanList
 
 
 @pytest.mark.django_db
@@ -101,17 +101,17 @@ class BaseTest(APITestCase):
         cost = PlanCost(cost=9.99, plan=plan)
         cost.save()
         subscription_url = reverse('subscriptions_api:user-subscriptions-list')
-        user_sub_data = {'subscription': cost.pk, 'user': self.user.pk}
+        user_sub_data = {'plan_cost': cost.pk, 'user': self.user.pk}
         self.client.force_authenticate(self.admin_user)
         r = self.client.post(subscription_url, data=user_sub_data)
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(r.data['subscription'], cost.pk)
+        self.assertEqual(r.data['plan_cost'], cost.pk)
 
     def test_user_can_only_see_own_subscription(self):
         cost = self.create_new_user_plan_cost(plan_name='Free Plan')
 
         subscription_url = reverse('subscriptions_api:user-subscriptions-list')
-        user_sub_data = {'subscription': cost.pk, 'user': self.admin_user.pk}
+        user_sub_data = {'plan_cost': cost.pk, 'user': self.admin_user.pk}
         self.client.force_authenticate(self.admin_user)
         r = self.client.post(subscription_url, data=user_sub_data)
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
@@ -124,16 +124,18 @@ class BaseTest(APITestCase):
 
     def test_staff_can_create_user_transaction(self):
         cost = self.create_new_user_plan_cost('Basic Plan')
-        transact_data = {'user': self.user.pk, 'subscription': cost.pk, 'date_transaction': datetime.now()}
+        subscription = cost.setup_user_subscription(user=self.user)
+        transact_data = {'user': self.user.pk, 'subscription': subscription.pk, 'date_transaction': datetime.now()}
         transaction_url = reverse('subscriptions_api:subscription-transactions-list')
         self.client.force_authenticate(self.admin_user)
         r = self.client.post(transaction_url, data=transact_data)
         self.assertEqual(r.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(r.data['subscription'], cost.pk)
+        self.assertEqual(r.data['subscription'], subscription.pk)
 
     def test_user_can_only_see_own_transaction(self):
         cost = self.create_new_user_plan_cost('Smart Plan')
-        transact_data = {'user': self.admin_user.pk, 'subscription': cost.pk, 'date_transaction': datetime.now()}
+        subscription = cost.setup_user_subscription(self.admin_user)
+        transact_data = {'user': self.admin_user.pk, 'subscription': subscription.pk, 'date_transaction': datetime.now()}
         transaction_url = reverse('subscriptions_api:subscription-transactions-list')
         self.client.force_authenticate(self.admin_user)
         r = self.client.post(transaction_url, data=transact_data)
