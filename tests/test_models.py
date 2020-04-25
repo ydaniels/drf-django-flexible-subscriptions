@@ -3,10 +3,13 @@ from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 import pytest
-
-from subscriptions_api.models import SubscriptionPlan, SubscriptionTransaction, PlanCost, UserSubscription, DAY, MONTH, WEEK, YEAR
-
+import swapper
+from subscriptions_api.models import SubscriptionPlan
+from subscriptions_api.base_models import PlanCost, DAY, MONTH, WEEK, YEAR
 pytestmark = pytest.mark.django_db
+
+UserSubscription = swapper.load_model('subscriptions_api', 'UserSubscription')
+SubscriptionTransaction = swapper.load_model('subscriptions_api', 'SubscriptionTransaction')
 
 
 @pytestmark
@@ -207,8 +210,11 @@ class TestSubscriptionModel(TestCase):
                                                     del_multipe_subscription=True)
         subscription_2 = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True)
         self.assertNotEqual(subscription, subscription_2)
-        subscription_3 = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
-        self.assertEqual(subscription, subscription_3)
+        plan_name = 'Fake Plan 4'
+        cost_2 = self.create_subscription_plan(plan_name)
+        subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
+        subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
+        self.assertEqual(subscription_3, subscription_4)
 
     def tearDown(self):
         self.user.delete()

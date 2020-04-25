@@ -1,13 +1,15 @@
+import swapper
 from rest_framework import viewsets
-
-
 from subscriptions_api import serializers, models
-
+from subscriptions_api.base_models import PlanTag, PlanCost
 from .permissions import IsAdminOrReadOnly
+
+UserSubscriptionModel = swapper.load_model('subscriptions_api', 'UserSubscription')
+SubscriptionTransactionModel = swapper.load_model('subscriptions_api', 'SubscriptionTransaction')
 
 
 class PlanTagViewSet(viewsets.ModelViewSet):
-    queryset = models.PlanTag.objects.all()
+    queryset = PlanTag.objects.all()
     serializer_class = serializers.PlanTagSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -19,7 +21,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
 
 
 class PlanCostViewSet(viewsets.ModelViewSet):
-    queryset = models.PlanCost.objects.all()
+    queryset = PlanCost.objects.all()
     serializer_class = serializers.PlanCostSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -30,8 +32,8 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return models.UserSubscription.objects.all()
-        return models.UserSubscription.objects.filter(user=self.request.user)
+            return UserSubscriptionModel.objects.all()
+        return UserSubscriptionModel.objects.filter(user=self.request.user)
 
 
 class SubscriptionTransactionViewSet(viewsets.ModelViewSet):
@@ -40,8 +42,8 @@ class SubscriptionTransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return models.SubscriptionTransaction.objects.all()
-        return models.SubscriptionTransaction.objects.filter(user=self.request.user)
+            return SubscriptionTransactionModel.objects.all()
+        return SubscriptionTransactionModel.objects.filter(user=self.request.user)
 
 
 class PlanListViewSet(viewsets.ModelViewSet):

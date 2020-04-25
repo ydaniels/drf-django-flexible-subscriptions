@@ -6,7 +6,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth.models import User
 
-from subscriptions_api.models import PlanCost, SubscriptionPlan, PlanList
+from subscriptions_api.base_models import PlanCost, SubscriptionPlan
+from subscriptions_api.models import PlanList
 
 
 @pytest.mark.django_db

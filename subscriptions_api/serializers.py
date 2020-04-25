@@ -1,15 +1,18 @@
+import swapper
 from rest_framework import serializers
 
 from subscriptions_api import models
+from subscriptions_api.base_models import PlanTag, PlanCost
 
-from .models import PlanCost, UserSubscription
+UserSubscriptionModel = swapper.load_model('subscriptions_api', 'UserSubscription')
+SubscriptionTransactionModel = swapper.load_model('subscriptions_api', 'SubscriptionTransaction')
 
 
 class PlanTagSerializer(serializers.ModelSerializer):
     """Serializer for PlanTag model"""
 
     class Meta:
-        model = models.PlanTag
+        model = PlanTag
         fields = '__all__'
 
 
@@ -74,7 +77,7 @@ class SubscriptionTransactionSerializer(serializers.ModelSerializer):
     """SubscriptionTransaction serializer"""
 
     class Meta:
-        model = models.SubscriptionTransaction
+        model = SubscriptionTransactionModel
         fields = '__all__'
 
 
@@ -83,5 +86,5 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
     transactions = SubscriptionTransactionSerializer(many=True, read_only=True)
 
     class Meta:
-        model = UserSubscription
+        model = UserSubscriptionModel
         fields = '__all__'
