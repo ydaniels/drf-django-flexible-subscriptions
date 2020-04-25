@@ -1,7 +1,6 @@
 from django.contrib import admin
 from swapper import load_model
-from subscriptions_api.base_models import PlanTag, PlanCost, SubscriptionPlan
-from subscriptions_api.models import PlanList, PlanListDetail
+from subscriptions_api.models import PlanList, PlanListDetail, PlanTag, PlanCost, SubscriptionPlan
 
 UserSubscription = load_model('subscriptions_api', 'UserSubscription')
 SubscriptionTransaction = load_model('subscriptions_api', 'SubscriptionTransaction')

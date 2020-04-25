@@ -4,8 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 import pytest
 import swapper
-from subscriptions_api.models import SubscriptionPlan
-from subscriptions_api.base_models import PlanCost, DAY, MONTH, WEEK, YEAR
+from subscriptions_api.models import SubscriptionPlan, PlanCost, DAY, MONTH, WEEK, YEAR
 pytestmark = pytest.mark.django_db
 
 UserSubscription = swapper.load_model('subscriptions_api', 'UserSubscription')

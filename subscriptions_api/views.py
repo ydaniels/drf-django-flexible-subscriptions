@@ -1,7 +1,6 @@
 import swapper
 from rest_framework import viewsets
 from subscriptions_api import serializers, models
-from subscriptions_api.base_models import PlanTag, PlanCost
 from .permissions import IsAdminOrReadOnly
 
 UserSubscriptionModel = swapper.load_model('subscriptions_api', 'UserSubscription')
@@ -9,7 +8,7 @@ SubscriptionTransactionModel = swapper.load_model('subscriptions_api', 'Subscrip
 
 
 class PlanTagViewSet(viewsets.ModelViewSet):
-    queryset = PlanTag.objects.all()
+    queryset = models.PlanTag.objects.all()
     serializer_class = serializers.PlanTagSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -21,7 +20,7 @@ class SubscriptionPlanViewSet(viewsets.ModelViewSet):
 
 
 class PlanCostViewSet(viewsets.ModelViewSet):
-    queryset = PlanCost.objects.all()
+    queryset = models.PlanCost.objects.all()
     serializer_class = serializers.PlanCostSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
