@@ -245,7 +245,7 @@ class PlanCost(models.Model):
         return None
 
     def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False,
-                                del_multipe_subscription=False, resuse=False):
+                                del_multipe_subscription=False, record_transaction=False, mark_transaction_paid=True, resuse=False):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.
@@ -273,10 +273,10 @@ class PlanCost(models.Model):
                 cancelled=False
             )
         # Add user to the proper group
-
+        if record_transaction:
+            subscription.record_transaction(transaction_date=subscription_date)
         if active:
-            subscription.activate(subscription_date=subscription_date)
-
+            subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid)
         return subscription
 
     @property
@@ -409,15 +409,18 @@ class UserSubscription(models.Model):
             return round(days_used * self.plan_cost.daily_cost, 2)
         return 0
 
-    def activate(self, subscription_date=None):
+    def activate(self, subscription_date=None, mark_transaction_paid=True):
         current_date = subscription_date or timezone.now()
         next_billing_date = self.plan_cost.next_billing_datetime(current_date)
         self.active = True
         self.cancelled = False
+        self.due = False
         self.date_billing_start = current_date
         self.date_billing_end = next_billing_date + timedelta(days=self.plan_cost.plan.grace_period)
         self.date_billing_next = next_billing_date
         self._add_user_to_group()
+        if mark_transaction_paid:
+            self.transactions.update(paid=True)
         self.save()
 
     def deactivate(self):
@@ -425,6 +428,7 @@ class UserSubscription(models.Model):
         self.active = False
         self.date_billing_last = current_date
         self.cancelled = True
+        self.due = False
         self._remove_user_from_group()
         self.save()
 

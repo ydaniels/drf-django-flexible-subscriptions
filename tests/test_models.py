@@ -107,6 +107,22 @@ class TestSubscriptionModel(TestCase):
                                                                    subscription=subscription).exists()
         self.assertTrue(transaction_exist)
 
+    def test_auto_generated_transaction(self):
+        plan_name = 'Fake Plan'
+        cost = self.create_subscription_plan(plan_name)
+        subscription = cost.setup_user_subscription(self.user, active=True, record_transaction=True)
+        self.assertEqual(subscription.transactions.count(), 1)
+
+    def test_transaction_auto_paid(self):
+        plan_name = 'Fake Plan'
+        cost = self.create_subscription_plan(plan_name)
+        subscription = cost.setup_user_subscription(self.user, active=False)
+        transaction = subscription.record_transaction()
+        self.assertFalse(transaction.paid)
+        subscription.activate(mark_transaction_paid=True)
+        transaction.refresh_from_db()
+        self.assertTrue(transaction.paid)
+
     def test_daily_day_cost(self):
         cost = self.create_subscription_plan('Super Saver')
         cost.cost = 100
