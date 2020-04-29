@@ -308,7 +308,8 @@ class PlanCost(models.Model):
             return float(self.cost) / (365.2425 * self.recurrence_period)
 
         return 0
-
+    def __str__(self):
+        return '{} {} {}'.format(self.plan.plan_name, self.display_billing_frequency_text, self.cost)
 
 class PlanList(models.Model):
     """Model to record details of a display list of SubscriptionPlans."""
@@ -380,3 +381,6 @@ class PlanListDetail(models.Model):
         return 'Plan List {} - {}'.format(
             self.plan_list, self.plan.plan_name
         )
+
+    class Meta:
+        ordering = ('order',)
