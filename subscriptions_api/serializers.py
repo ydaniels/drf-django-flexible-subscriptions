@@ -75,14 +75,6 @@ class PlanListSerializer(serializers.ModelSerializer):
 class SubscriptionTransactionSerializer(serializers.ModelSerializer):
     """SubscriptionTransaction serializer"""
 
-    subscription_name = serializers.SerializerMethodField()
-
-    def get_subscription_name(self, obj):
-        if obj.subscription:
-            return '{} {}'.format(obj.subscription.plan_cost.plan.plan_name,
-                                  obj.subscription.plan_cost.display_billing_frequency_text)
-        return ''
-
     class Meta:
         model = SubscriptionTransactionModel
         fields = '__all__'
