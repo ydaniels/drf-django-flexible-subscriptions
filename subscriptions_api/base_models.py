@@ -222,9 +222,6 @@ class BaseUserSubscription(models.Model):
         """
         return self.notify('notify_payment_success', **kwargs)
 
-    def __str__(self):
-        return '{} {}'.format(self.plan_cost.plan.plan_name, self.plan_cost.display_billing_frequency_text)
-
 
 class BaseSubscriptionTransaction(models.Model):
     """Details for a subscription plan billing."""
