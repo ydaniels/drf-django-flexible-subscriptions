@@ -79,6 +79,13 @@ class SubscriptionPlan(models.Model):
         null=True,
         unique=True,
     )
+    feature_ref = models.CharField(
+        blank=True,
+        help_text=_('Reference to select list of allowed features for this plan'),
+        max_length=12,
+        null=True,
+        unique=True,
+    )
     plan_description = models.CharField(
         blank=True,
         help_text=_('a description of the subscription plan'),

@@ -203,7 +203,7 @@ class BaseTest(APITestCase):
         self.assertIn('_name', r.data['features'])
 
     def create_new_user_plan(self, plan_name):
-        plan = SubscriptionPlan(plan_name=plan_name)
+        plan = SubscriptionPlan(plan_name=plan_name, feature_ref=plan_name)
         plan.save()
         return plan
 

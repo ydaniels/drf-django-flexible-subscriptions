@@ -43,7 +43,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         return obj.display_tags()
 
     def get_features(self, obj):
-        plan = get_plan_feature(obj.plan_name)
+        plan = get_plan_feature(obj.feature_ref)
         return plan
 
     class Meta:

@@ -26,6 +26,8 @@ def get_plans():
 
 
 def get_plan_feature(plan_name):
+    if not plan_name:
+        return None
     return get_plans().get(plan_name, None)
 
 
