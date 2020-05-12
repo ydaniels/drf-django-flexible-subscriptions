@@ -1,5 +1,16 @@
 from django.conf import settings
-from subscriptions.conf import string_to_module_and_class
+
+
+def string_to_module_and_class(string):
+    """Breaks a string to a module and class name component."""
+    components = string.split('.')
+    component_class = components.pop()
+    component_module = '.'.join(components)
+
+    return {
+        'module': component_module,
+        'class': component_class,
+    }
 
 
 def compile_settings():
@@ -9,6 +20,9 @@ def compile_settings():
         Returns:
             dict: All possible Django Flexible Subscriptions settings.
     """
+    plans_concrete_module = getattr(
+        settings, 'DFS_CONCRETE_PLANS_MODULE', 'subscriptions_api.plans'
+    )
     subscribe_notify_processing = getattr(
         settings, 'DFS_NOTIFY_PROCESSING', 'subscriptions_api.notifications.EmailNotification'
     )
@@ -58,6 +72,7 @@ def compile_settings():
         'notify_deactivate': subscribe_notify_deactivate_class,
         'notify_payment_error': subscribe_notify_payment_error_class,
         'notify_payment_success': subscribe_notify_payment_success_class,
+        'plans_concrete_module': plans_concrete_module
     }
 
 
