@@ -1,4 +1,5 @@
 # Minimum Django and REST framework version
+
 Django>=2.0
 djangorestframework>=3.9
 
@@ -18,3 +19,4 @@ mkdocs==0.11.1
 django-flexible-subscriptions>=0.10.0
 
 swapper
+jsonfield

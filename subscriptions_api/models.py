@@ -1,6 +1,7 @@
 """Models Gotten from the Flexible Subscriptions app.
     with minor changes
 """
+import collections
 from datetime import timedelta
 from uuid import uuid4
 import swapper
@@ -8,6 +9,8 @@ from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from jsonfield import JSONField
 
 from subscriptions_api.base_models import BaseUserSubscription, BaseSubscriptionTransaction
 
@@ -367,6 +370,12 @@ class PlanListDetail(models.Model):
         blank=True,
         help_text=_('HTML content to display for plan'),
         null=True,
+    )
+    json_content = JSONField(
+        blank=True,
+        help_text=_('JSON content to display for plan'),
+        null=True,
+        load_kwargs={'object_pairs_hook': collections.OrderedDict}
     )
     subscribe_button_text = models.CharField(
         blank=True,
