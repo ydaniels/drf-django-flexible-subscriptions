@@ -93,7 +93,11 @@ class SubscriptionTransactionSerializer(serializers.ModelSerializer):
 class UserSubscriptionSerializer(serializers.ModelSerializer):
     """User subscription model serializer"""
     transactions = SubscriptionTransactionSerializer(many=True, read_only=True)
+    description = serializers.SerializerMethodField()
 
     class Meta:
         model = UserSubscriptionModel
         fields = '__all__'
+
+    def get_description(self, obj):
+        return obj.description

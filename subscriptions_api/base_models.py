@@ -111,6 +111,12 @@ class BaseUserSubscription(models.Model):
         return 0
 
     @property
+    def description(self):
+        if self.plan_cost:
+            text = f'{self.plan_cost.plan.plan_name} {self.plan_cost.display_billing_frequency_text}'
+            return text
+
+    @property
     def used_daily_balance(self):
         """
         Calculate used balance  of a subscription for a particular period
