@@ -4,6 +4,7 @@
 from datetime import timedelta
 from uuid import uuid4
 import swapper
+import json
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -86,6 +87,11 @@ class SubscriptionPlan(models.Model):
         null=True,
         unique=True,
     )
+    features = models.TextField(
+        blank=True,
+        help_text=_('list of json allowed features for this plan'),
+        null=True
+    )
     plan_description = models.CharField(
         blank=True,
         help_text=_('a description of the subscription plan'),
@@ -113,12 +119,28 @@ class SubscriptionPlan(models.Model):
             'subscription expires'
         ),
     )
+    trial_period = models.PositiveIntegerField(
+        default=0,
+        help_text=_(
+            'how many days to give free before the subscription '
+            'subscription begins'
+        ),
+    )
 
     class Meta:
         ordering = ('plan_name',)
         permissions = (
             ('subscriptions', 'Can interact with subscription details'),
         )
+
+    def __getattr__(self, name):
+        if self.features:
+            feature_dict = json.loads(self.features)
+            try:
+                return feature_dict[name]
+            except KeyError:
+                pass
+        raise AttributeError
 
     def __str__(self):
         return self.plan_name

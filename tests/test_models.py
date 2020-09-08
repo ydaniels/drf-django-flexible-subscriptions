@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
@@ -214,6 +215,13 @@ class TestSubscriptionModel(TestCase):
         subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
         subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
         self.assertEqual(subscription_3, subscription_4)
+
+    def test_subscription_plan_features(self):
+        plan = SubscriptionPlan(plan_name='Test Json Plan', features=json.dumps({'some_limit': 10}))
+        plan.save()
+        self.assertEqual(plan.some_limit, 10)
+        self.assertTrue(hasattr(plan, 'some_limit'))
+        self.assertFalse(hasattr(plan, 'unknown_feature'))
 
     def tearDown(self):
         self.user.delete()

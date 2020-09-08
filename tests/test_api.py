@@ -1,3 +1,4 @@
+import json
 import pytest
 from datetime import datetime
 
@@ -189,10 +190,12 @@ class BaseTest(APITestCase):
 
     def test_can_get_plan_features(self):
         plan = self.create_new_user_plan(plan_name='BasePlan')
+        plan.features = json.dumps({'allow_user_to_perform_action': True})
+        plan.save()
         self.client.force_authenticate(self.user)
         plans_url = reverse('subscriptions_api:subscription-plans-detail', kwargs={'pk': plan.pk})
         r = self.client.get(plans_url)
-        self.assertEqual(r.data['features']['_name'], 'BasePlan')
+        self.assertTrue(r.data['features']['allow_user_to_perform_action'])
 
     def test_planlist_label_returned(self):
         plan_list = PlanList(title='Bi Weekly Plans', features_ref='ONE')

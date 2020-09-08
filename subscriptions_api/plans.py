@@ -1,6 +1,8 @@
 import inspect
 import importlib
+import json
 from subscriptions_api.app_settings import SETTINGS
+from subscriptions_api.models import SubscriptionPlan
 
 
 class dotdict(dict):
@@ -28,7 +30,14 @@ def get_plans():
 def get_plan_feature(plan_name):
     if not plan_name:
         return None
-    return get_plans().get(plan_name, None)
+    # Get features from model
+    plan = SubscriptionPlan.objects.get(plan_name=plan_name)
+    try:
+        # If features of a plan is stored in json then send it
+        features_dict = json.loads(plan.features)
+        return dotdict(features_dict)
+    except json.JSONDecodeError:
+        return get_plans().get(plan_name, None)
 
 
 def get_planlist_features(feature_ref=None):

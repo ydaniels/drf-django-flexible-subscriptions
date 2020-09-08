@@ -7,7 +7,7 @@ djangorestframework>=3.9
 pytest-django>=3.8.0
 pytest>=3.6
 pytest-cov>=1.6
-flake8==2.4.0
+flake8>=2.4.0
 
 # wheel for PyPI installs
 wheel==0.24.0
