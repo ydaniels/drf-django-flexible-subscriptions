@@ -34,7 +34,6 @@ To use in
     INSTALLED_APPS = [
                         ...,
                         'rest_framework',
-                        'subscriptions',
                         'subscriptions_api',
                         ]
 
