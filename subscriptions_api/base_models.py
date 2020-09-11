@@ -38,7 +38,8 @@ class BaseUserSubscription(models.Model):
     reference = models.CharField(
         help_text=_('External System Reference'),
         max_length=100,
-        blank=True
+        null=True,
+        blank=True,
     )
     date_billing_start = models.DateTimeField(
         blank=True,
