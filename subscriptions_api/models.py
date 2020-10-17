@@ -386,6 +386,9 @@ class PlanList(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ('title',)
+
 
 class PlanListDetail(models.Model):
     """Model to add additional details to plans when part of PlanList."""
