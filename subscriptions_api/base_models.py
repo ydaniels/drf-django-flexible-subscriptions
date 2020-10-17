@@ -35,6 +35,12 @@ class BaseUserSubscription(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriptions'
     )
+    reference = models.CharField(
+        help_text=_('External System Reference'),
+        max_length=100,
+        null=True,
+        blank=True,
+    )
     date_billing_start = models.DateTimeField(
         blank=True,
         help_text=_('the date to start billing this subscription'),
