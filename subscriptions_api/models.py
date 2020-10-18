@@ -10,6 +10,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from subscriptions_api.app_settings import SETTINGS
 from subscriptions_api.base_models import BaseUserSubscription, BaseSubscriptionTransaction
 
 # Convenience references for units for plan recurrence billing
@@ -278,6 +279,9 @@ class PlanCost(models.Model):
 
         return None
 
+    def activate_default_subscription(self, user):
+        activate_default_user_subscription(user=user)
+
     def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False,
                                 del_multipe_subscription=False, record_transaction=False, mark_transaction_paid=True,
                                 resuse=False):
@@ -425,3 +429,12 @@ class PlanListDetail(models.Model):
 
     class Meta:
         ordering = ('order',)
+
+
+def activate_default_user_subscription(user):
+    plan_cost_id = SETTINGS['default_plan_cost_id']
+    if plan_cost_id:
+        cost_obj = PlanCost.objects.get(pk=plan_cost_id)
+        cost_obj.setup_user_subscription(user, active=True, no_multipe_subscription=True,
+                                         record_transaction=True, mark_transaction_paid=True,
+                                         resuse=True)

@@ -1,11 +1,13 @@
 import json
 from datetime import timedelta
+from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 import pytest
 import swapper
 from subscriptions_api.models import SubscriptionPlan, PlanCost, DAY, MONTH, WEEK, YEAR
+
 pytestmark = pytest.mark.django_db
 
 UserSubscription = swapper.load_model('subscriptions_api', 'UserSubscription')
@@ -37,6 +39,37 @@ class TestSubscriptionModel(TestCase):
         self.assertTrue(active_subscription.active)
         self.assertFalse(active_subscription.cancelled)
         self.assertTrue(self.user.groups.filter(name=cost.plan.group.name).exists())
+
+    @patch('subscriptions_api.signals.create_default_subscription')
+    def test_default_subscription_activated(self, signals):
+        plan_name = 'Standard Plan'
+        cost = self.create_subscription_plan(plan_name)
+        with patch.dict('subscriptions_api.app_settings.SETTINGS', {'default_plan_cost_id': cost.pk}):
+            new_user = User.objects.create_user('demo_username', 'api_user@example.com', 'demo_password')
+            active_subscription = new_user.subscriptions.get(plan_cost=cost)
+            subscription = UserSubscription.objects.get(user=new_user)
+            self.assertEqual(active_subscription.plan_cost, cost)
+            self.assertEqual(active_subscription, subscription)
+            self.assertTrue(active_subscription.active)
+            self.assertFalse(active_subscription.cancelled)
+
+    def test_default_subscription_activated_after_deactivate_old(self):
+        plan_name = 'Standard Plan'
+        cost = self.create_subscription_plan(plan_name)
+        cost.setup_user_subscription(self.user, active=True)
+        active_old_subscription = self.user.subscriptions.get(plan_cost=cost)
+        old_subscription = UserSubscription.objects.get(user=self.user)
+        self.assertEqual(active_old_subscription.plan_cost, cost)
+        plan_name = 'New Default Standard Plan'
+        default_cost = self.create_subscription_plan(plan_name)
+        with patch.dict('subscriptions_api.app_settings.SETTINGS', {'default_plan_cost_id': default_cost.pk}):
+            old_subscription.deactivate()
+            active_subscription = self.user.subscriptions.get(plan_cost=default_cost)
+            self.assertEqual(active_subscription.plan_cost, default_cost)
+            self.assertNotEqual(active_subscription.pk, old_subscription.pk)
+            self.assertTrue(active_subscription.active)
+            self.assertFalse(active_subscription.cancelled)
+            self.assertFalse(old_subscription.active)
 
     def test_can_setup_active_user_subscription_with_custom_date(self):
         plan_name = 'Custom Standard Plan'
@@ -212,8 +245,10 @@ class TestSubscriptionModel(TestCase):
         self.assertNotEqual(subscription, subscription_2)
         plan_name = 'Fake Plan 4'
         cost_2 = self.create_subscription_plan(plan_name)
-        subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
-        subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True, resuse=True)
+        subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+                                                        resuse=True)
+        subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+                                                        resuse=True)
         self.assertEqual(subscription_3, subscription_4)
 
     def test_subscription_plan_features(self):

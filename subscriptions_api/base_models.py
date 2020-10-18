@@ -155,6 +155,7 @@ class BaseUserSubscription(models.Model):
         self.due = False
         self._remove_user_from_group()
         self.save()
+        self.plan_cost.activate_default_subscription(self.user)
 
     def _add_user_to_group(self):
         try:

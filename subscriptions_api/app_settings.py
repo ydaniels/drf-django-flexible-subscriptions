@@ -20,6 +20,7 @@ def compile_settings():
         Returns:
             dict: All possible Django Flexible Subscriptions settings.
     """
+    default_plan_cost_id = getattr(settings, 'DFS_DEFAULT_PLAN_COST_ID', None)
     plans_concrete_module = getattr(
         settings, 'DFS_CONCRETE_PLANS_MODULE', 'subscriptions_api.plans'
     )
@@ -72,7 +73,8 @@ def compile_settings():
         'notify_deactivate': subscribe_notify_deactivate_class,
         'notify_payment_error': subscribe_notify_payment_error_class,
         'notify_payment_success': subscribe_notify_payment_success_class,
-        'plans_concrete_module': plans_concrete_module
+        'plans_concrete_module': plans_concrete_module,
+        'default_plan_cost_id': default_plan_cost_id
     }
 
 
