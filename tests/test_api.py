@@ -198,12 +198,12 @@ class BaseTest(APITestCase):
         self.assertTrue(r.data['features']['allow_user_to_perform_action'])
 
     def test_planlist_label_returned(self):
-        plan_list = PlanList(title='Bi Weekly Plans', features_ref='ONE')
+        plan_list = PlanList(title='Bi Weekly Plans', features=json.dumps({'_name': 'Name of Plan'}))
         plan_list.save()
         plan_list_url = reverse('subscriptions_api:planlist-detail', kwargs={'pk': plan_list.pk})
         self.client.force_authenticate(self.user)
         r = self.client.get(plan_list_url)
-        self.assertIn('_name', r.data['features'])
+        self.assertIn('Name of Plan', r.data['features']['_name'])
 
     def create_new_user_plan(self, plan_name):
         plan = SubscriptionPlan(plan_name=plan_name, feature_ref=plan_name)

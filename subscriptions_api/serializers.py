@@ -1,7 +1,5 @@
-import json
 import swapper
 from rest_framework import serializers
-from subscriptions_api.plans import get_planlist_features
 from subscriptions_api import models
 
 UserSubscriptionModel = swapper.load_model('subscriptions_api', 'UserSubscription')
@@ -44,8 +42,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         return obj.display_tags()
 
     def get_features(self, obj):
-        if obj.features:
-            return json.loads(obj.features)
+        return obj.get_features()
 
     class Meta:
         model = models.SubscriptionPlan
@@ -79,8 +76,7 @@ class PlanListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_features(self, obj):
-        label = get_planlist_features(obj.features_ref)
-        return label
+        return obj.get_features()
 
 
 class SubscriptionTransactionSerializer(serializers.ModelSerializer):

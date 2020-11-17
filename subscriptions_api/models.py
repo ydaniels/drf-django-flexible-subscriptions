@@ -134,9 +134,14 @@ class SubscriptionPlan(models.Model):
             ('subscriptions', 'Can interact with subscription details'),
         )
 
-    def __getattr__(self, name):
+    def get_features(self):
         if self.features:
-            feature_dict = json.loads(self.features)
+            return json.loads(self.features)
+        return {}
+
+    def __getattr__(self, name):
+        feature_dict = self.get_features()
+        if feature_dict:
             try:
                 return feature_dict[name]
             except KeyError:
@@ -360,12 +365,10 @@ class PlanList(models.Model):
         null=True,
         unique=True,
     )
-    features_ref = models.CharField(
+    features = models.TextField(
         blank=True,
-        help_text=_('Reference to select list of features to display for the plan list'),
-        max_length=12,
-        null=True,
-        unique=True,
+        help_text=_('Json dict for allowed features to display for the plan list'),
+        null=True
     )
     subtitle = models.TextField(
         blank=True,
@@ -386,6 +389,11 @@ class PlanList(models.Model):
         default=True,
         help_text=_('whether this plan list is active or not.'),
     )
+
+    def get_features(self):
+        if self.features:
+            return json.loads(self.features)
+        return {}
 
     def __str__(self):
         return self.title
