@@ -1,9 +1,10 @@
-import swapper
-from datetime import timedelta
 import importlib
+from datetime import timedelta
 from uuid import uuid4
-from django.db import models
+
+import swapper
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -241,6 +242,10 @@ class BaseUserSubscription(models.Model):
         """
         return self.notify('notify_payment_success', **kwargs)
 
+    def __str__(self):
+        return '{}|{}|{}|{}|{}|{}|{}'.format(self.id, self.user.email, self.description, self.date_billing_start,
+                                             self.date_billing_end, self.active, self.reference)
+
 
 class BaseSubscriptionTransaction(models.Model):
     """Details for a subscription plan billing."""
@@ -281,3 +286,6 @@ class BaseSubscriptionTransaction(models.Model):
     class Meta:
         ordering = ('-date_transaction', 'user',)
         abstract = True
+
+    def __str__(self):
+        return '{} {} {} {} {}'.format(self.id, self.date_transaction, self.amount, self.paid, self.subscription)

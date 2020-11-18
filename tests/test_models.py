@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 import pytest
 import swapper
-from subscriptions_api.models import SubscriptionPlan, PlanCost, DAY, MONTH, WEEK, YEAR
+from subscriptions_api.models import SubscriptionPlan, PlanCost, DAY, MONTH, WEEK, YEAR, activate_default_user_subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -64,6 +64,7 @@ class TestSubscriptionModel(TestCase):
         default_cost = self.create_subscription_plan(plan_name)
         with patch.dict('subscriptions_api.app_settings.SETTINGS', {'default_plan_cost_id': default_cost.pk}):
             old_subscription.deactivate()
+            activate_default_user_subscription(self.user)
             active_subscription = self.user.subscriptions.get(plan_cost=default_cost)
             self.assertEqual(active_subscription.plan_cost, default_cost)
             self.assertNotEqual(active_subscription.pk, old_subscription.pk)
