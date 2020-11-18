@@ -47,6 +47,15 @@ class SubscriptionTransaction(BaseSubscriptionTransaction):
         swappable = swapper.swappable_setting('subscriptions_api', 'SubscriptionTransaction')
 
 
+def activate_default_user_subscription(user):
+    plan_cost_id = SETTINGS['default_plan_cost_id']
+    if plan_cost_id:
+        cost_obj = PlanCost.objects.get(pk=plan_cost_id)
+        cost_obj.setup_user_subscription(user, active=True, no_multipe_subscription=True,
+                                         record_transaction=True, mark_transaction_paid=True,
+                                         resuse=True)
+
+
 class PlanTag(models.Model):
     """A tag for a subscription plan."""
     tag = models.CharField(
@@ -284,9 +293,6 @@ class PlanCost(models.Model):
 
         return None
 
-    def activate_default_subscription(self, user):
-        activate_default_user_subscription(user=user)
-
     def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False,
                                 del_multipe_subscription=False, record_transaction=False, mark_transaction_paid=True,
                                 resuse=False):
@@ -298,13 +304,6 @@ class PlanCost(models.Model):
             Returns:
                 obj: The newly created UserSubscription instance.
         """
-        if no_multipe_subscription:
-            previous_subscriptions = user.subscriptions.filter(active=True).all()
-            for sub in previous_subscriptions:
-                sub.deactivate()
-                if del_multipe_subscription:
-                    sub.delete()
-
         # Add subscription plan to user
         subscription = None
         if resuse:
@@ -322,6 +321,8 @@ class PlanCost(models.Model):
         if record_transaction:
             subscription.record_transaction(transaction_date=subscription_date)
         if active:
+            if no_multipe_subscription:
+                subscription.deactivate_previous_subscriptions(del_multipe_subscription=del_multipe_subscription)
             subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid)
         return subscription
 
@@ -437,12 +438,3 @@ class PlanListDetail(models.Model):
 
     class Meta:
         ordering = ('order',)
-
-
-def activate_default_user_subscription(user):
-    plan_cost_id = SETTINGS['default_plan_cost_id']
-    if plan_cost_id:
-        cost_obj = PlanCost.objects.get(pk=plan_cost_id)
-        cost_obj.setup_user_subscription(user, active=True, no_multipe_subscription=True,
-                                         record_transaction=True, mark_transaction_paid=True,
-                                         resuse=True)

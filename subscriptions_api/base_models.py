@@ -155,7 +155,13 @@ class BaseUserSubscription(models.Model):
         self.due = False
         self._remove_user_from_group()
         self.save()
-        self.plan_cost.activate_default_subscription(self.user)
+
+    def deactivate_previous_subscriptions(self, del_multipe_subscription=False):
+        previous_subscriptions = self.user.subscriptions.filter(active=True).all()
+        for sub in previous_subscriptions:
+            sub.deactivate()
+            if del_multipe_subscription:
+                sub.delete()
 
     def _add_user_to_group(self):
         try:
