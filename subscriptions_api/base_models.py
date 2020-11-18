@@ -273,5 +273,5 @@ class BaseSubscriptionTransaction(models.Model):
     paid = models.BooleanField(default=False, help_text=_('Mark transaction has paid'))
 
     class Meta:
-        ordering = ('date_transaction', 'user',)
+        ordering = ('-date_transaction', 'user',)
         abstract = True
