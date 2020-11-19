@@ -166,9 +166,9 @@ class BaseUserSubscription(models.Model):
         self.cancelled = True
         self.due = False
         self._remove_user_from_group()
+        self.save()
         if activate_default:
             self.plan_cost.activate_default_user_subscription(self.user)
-        self.save()
 
     def deactivate_previous_subscriptions(self, del_multipe_subscription=False):
         previous_subscriptions = self.user.subscriptions.filter(active=True).all()

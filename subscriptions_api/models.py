@@ -53,7 +53,7 @@ def activate_default_user_subscription(user):
     if plan_cost_id:
         cost_obj = PlanCost.objects.get(pk=plan_cost_id)
         cost_obj.setup_user_subscription(user, active=True, no_multipe_subscription=True,
-                                         record_transaction=True, mark_transaction_paid=True,
+                                         record_transaction=False, mark_transaction_paid=False,
                                          resuse=True)
 
 
