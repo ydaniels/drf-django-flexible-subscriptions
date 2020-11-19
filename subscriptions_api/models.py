@@ -1,10 +1,11 @@
 """Models Gotten from the Flexible Subscriptions app.
     with minor changes
 """
+import json
 from datetime import timedelta
 from uuid import uuid4
+
 import swapper
-import json
 from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -324,9 +325,9 @@ class PlanCost(models.Model):
         if record_transaction:
             subscription.record_transaction(transaction_date=subscription_date)
         if active:
-            if no_multipe_subscription:
-                subscription.deactivate_previous_subscriptions(del_multipe_subscription=del_multipe_subscription)
-            subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid)
+            subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid,
+                                  no_multipe_subscription=no_multipe_subscription,
+                                  del_multipe_subscription=del_multipe_subscription)
         return subscription
 
     @property
