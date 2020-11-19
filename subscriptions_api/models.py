@@ -212,6 +212,9 @@ class PlanCost(models.Model):
     class Meta:
         ordering = ('recurrence_unit', 'recurrence_period', 'cost',)
 
+    def activate_default_user_subscription(self, user):
+        activate_default_user_subscription(user)
+
     @property
     def display_recurrent_unit_text(self):
         """Converts recurrence_unit integer to text."""

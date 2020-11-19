@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from subscriptions_api.app_settings import SETTINGS
-
 SubscriptionTransactionModel = swapper.get_model_name('subscriptions_api', 'SubscriptionTransaction')
 UserSubscriptionModel = swapper.get_model_name('subscriptions_api', 'UserSubscription')
 
@@ -148,13 +147,15 @@ class BaseUserSubscription(models.Model):
             self.transactions.update(paid=True)
         self.save()
 
-    def deactivate(self):
+    def deactivate(self, activate_default=False):
         current_date = timezone.now()
         self.active = False
         self.date_billing_last = current_date
         self.cancelled = True
         self.due = False
         self._remove_user_from_group()
+        if activate_default:
+            self.plan_cost.activate_default_user_subscription(self.user)
         self.save()
 
     def deactivate_previous_subscriptions(self, del_multipe_subscription=False):
