@@ -80,7 +80,7 @@ class BaseUserSubscription(models.Model):
         )
         abstract = True
 
-    def record_transaction(self, amount=None, transaction_date=None):
+    def record_transaction(self, amount=None, transaction_date=None, paid=False):
         """Records transaction details in SubscriptionTransaction.
             Parameters:
                 amount: Use custom amount to create transaction for the subscription
@@ -103,6 +103,7 @@ class BaseUserSubscription(models.Model):
             subscription=self,  # A transaction should link to is subscription
             date_transaction=transaction_date,
             amount=amount,
+            paid=paid
         )
 
     @property
