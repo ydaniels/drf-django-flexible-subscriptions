@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import swapper
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -182,7 +183,7 @@ class BaseUserSubscription(models.Model):
         try:
             group = self.plan_cost.plan.group
             group.user_set.add(self.user)
-        except AttributeError:
+        except (AttributeError, Group.DoesNotExist):
             # No group available to add user to
             pass
 
@@ -190,7 +191,7 @@ class BaseUserSubscription(models.Model):
         try:
             group = self.plan_cost.plan.group
             group.user_set.remove(self.user)
-        except AttributeError:
+        except (AttributeError, Group.DoesNotExist):
             # No group available to add user to
             pass
 
