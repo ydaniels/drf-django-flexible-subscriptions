@@ -100,7 +100,7 @@ class SubscriptionPlan(models.Model):
     )
     features = models.TextField(
         blank=True,
-        help_text=_('list of json allowed features for this plan'),
+        help_text=_('dict of json allowed features for this plan'),
         null=True
     )
     plan_description = models.CharField(

@@ -52,9 +52,9 @@ This will expose the following **django-flexible-subscriptions** endpoints with 
  - api/subscriptions/subscription-transactions/
  - api/subscriptions/user-subscriptions/
 
-For subscribing user to a plan **drf-django-flexible-subscriptions** provides few helper method through a proxy model to the main  django-flexible-subscriptions  **PlanCost** and **UserSubscriptions** models, so you can implement your payment logic in any way you want without binding to a specific view e.g
+ **drf-django-flexible-subscriptions** provides helper methods and models (check models.py), so you can implement your payment logic in any way you want without binding to a specific view e.g
 
-*models.py*
+*your models.py*
 
 .. code-block:: python
 
@@ -67,12 +67,17 @@ For subscribing user to a plan **drf-django-flexible-subscriptions** provides fe
 
 .. code-block:: python
 
+    #Create SubscriptionPlan and PlanCost from django admin
+    #A user is added to the group on subscription plan after subscription is activated.
+    #SubscriptionPlan features field can be json of dict e.g {"can_send_message": true } that can be accessed
+    #directly from the subscription plan obj subscription_obj.can_send_message
+
     #you can subscribe user to a plan by
-    subscription = cost.setup_user_subscription(request.user, active=False, no_multipe_subscription=True)
+    subscription = cost.setup_user_subscription(request.user, active=False, no_multiple_subscription=True)
 
     #with active=False user subscription would not be activated immediately use active=True for otherwise
 
-    #no_multiple_sub prevents user from being subscribed to more than one plan at time previous plan will be removed
+    #no_multiple_subscription prevents user from being subscribed to more than one plan at time previous plan will be removed
 
     #After successful user payment you can activate_subscription by using subscription above from setup or
 
@@ -82,11 +87,11 @@ For subscribing user to a plan **drf-django-flexible-subscriptions** provides fe
 
     subscription = UserSubscription.objects.get(user=request.user, cost=cost)
 
-    subscription.activate_user_subscription() #Activate  subscription
+    subscription.activate() #Activate  subscription and user is added to the group on subscription plan
 
-    #deactivate subscription with
+    #deactivate subscription. User is removed from Group on subscription
 
-    subscription.deactivate_user_subscription()
+    subscription.deactivate()
 
     #You can also record transaction
 
