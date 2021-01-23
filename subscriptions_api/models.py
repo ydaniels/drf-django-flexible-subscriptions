@@ -52,7 +52,7 @@ def activate_default_user_subscription(user):
     plan_cost_id = SETTINGS['default_plan_cost_id']
     if plan_cost_id:
         cost_obj = PlanCost.objects.get(pk=plan_cost_id)
-        cost_obj.setup_user_subscription(user, active=True, no_multipe_subscription=True,
+        cost_obj.setup_user_subscription(user, active=True, no_multiple_subscription=True,
                                          record_transaction=False, mark_transaction_paid=False,
                                          resuse=True)
 
@@ -297,8 +297,8 @@ class PlanCost(models.Model):
 
         return None
 
-    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multipe_subscription=False,
-                                del_multipe_subscription=False, record_transaction=False, mark_transaction_paid=True,
+    def setup_user_subscription(self, user, active=True, subscription_date=None, no_multiple_subscription=False,
+                                del_multiple_subscription=False, record_transaction=False, mark_transaction_paid=True,
                                 resuse=False):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
@@ -326,8 +326,8 @@ class PlanCost(models.Model):
             subscription.record_transaction(transaction_date=subscription_date)
         if active:
             subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid,
-                                  no_multipe_subscription=no_multipe_subscription,
-                                  del_multipe_subscription=del_multipe_subscription)
+                                  no_multiple_subscription=no_multiple_subscription,
+                                  del_multiple_subscription=del_multiple_subscription)
         return subscription
 
     @property

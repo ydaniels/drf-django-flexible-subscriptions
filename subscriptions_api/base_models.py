@@ -139,12 +139,12 @@ class BaseUserSubscription(models.Model):
             self,
             subscription_date=None,
             mark_transaction_paid=True,
-            no_multipe_subscription=False,
-            del_multipe_subscription=False,
+            no_multiple_subscription=False,
+            del_multiple_subscription=False,
     ):
-        if no_multipe_subscription:
+        if no_multiple_subscription:
             self.deactivate_previous_subscriptions(
-                del_multipe_subscription=del_multipe_subscription
+                del_multiple_subscription=del_multiple_subscription
             )
         current_date = subscription_date or timezone.now()
         next_billing_date = self.plan_cost.next_billing_datetime(current_date)
@@ -172,11 +172,11 @@ class BaseUserSubscription(models.Model):
         if activate_default:
             self.plan_cost.activate_default_user_subscription(self.user)
 
-    def deactivate_previous_subscriptions(self, del_multipe_subscription=False):
+    def deactivate_previous_subscriptions(self, del_multiple_subscription=False):
         previous_subscriptions = self.user.subscriptions.filter(active=True).all()
         for sub in previous_subscriptions:
             sub.deactivate()
-            if del_multipe_subscription:
+            if del_multiple_subscription:
                 sub.delete()
 
     def _add_user_to_group(self):

@@ -218,37 +218,37 @@ class TestSubscriptionModel(TestCase):
     def test_user_no_multiple_subscriptions_allowed(self):
         plan_name = 'Fake Plan 1'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True)
         plan_name = 'Fake Plan 2'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True)
         subscriptions = UserSubscription.objects.filter(user=self.user)
         self.assertFalse(all(sub.active is True for sub in subscriptions.all()))
 
     def test_user_only_allowed_single_subscription_at_a_time(self):
         plan_name = 'Fake Plan 3'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
-                                     del_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True,
+                                     del_multiple_subscription=True)
         plan_name = 'Fake Plan 4'
         cost = self.create_subscription_plan(plan_name)
-        cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
-                                     del_multipe_subscription=True)
+        cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True,
+                                     del_multiple_subscription=True)
         subscriptions_count = UserSubscription.objects.filter(user=self.user).count()
         self.assertEqual(subscriptions_count, 1)
 
     def test_subscription_reused(self):
         plan_name = 'Fake Plan 3'
         cost = self.create_subscription_plan(plan_name)
-        subscription = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
-                                                    del_multipe_subscription=True)
-        subscription_2 = cost.setup_user_subscription(self.user, active=True, no_multipe_subscription=True)
+        subscription = cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True,
+                                                    del_multiple_subscription=True)
+        subscription_2 = cost.setup_user_subscription(self.user, active=True, no_multiple_subscription=True)
         self.assertNotEqual(subscription, subscription_2)
         plan_name = 'Fake Plan 4'
         cost_2 = self.create_subscription_plan(plan_name)
-        subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+        subscription_3 = cost_2.setup_user_subscription(self.user, active=True, no_multiple_subscription=True,
                                                         resuse=True)
-        subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multipe_subscription=True,
+        subscription_4 = cost_2.setup_user_subscription(self.user, active=True, no_multiple_subscription=True,
                                                         resuse=True)
         self.assertEqual(subscription_3, subscription_4)
 
