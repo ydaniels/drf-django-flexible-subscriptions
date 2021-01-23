@@ -16,3 +16,4 @@ mkdocs==0.11.1
 
 
 swapper
+six
