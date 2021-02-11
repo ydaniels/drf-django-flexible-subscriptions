@@ -70,7 +70,10 @@ This will expose the following **django-flexible-subscriptions** endpoints with 
     #Create SubscriptionPlan and PlanCost from django admin
     #A user is added to the group on subscription plan after subscription is activated.
     #SubscriptionPlan features field can be json of dict e.g {"can_send_message": true } that can be accessed
-    #directly from the subscription plan obj subscription_obj.can_send_message
+    #directly from the subscription plan obj 
+    
+    #New user can automatically be subscribed to a plan cost by setting DFS_DEFAULT_PLAN_COST_ID in settings.py  to ID of a plan cost 
+    # you want user to be subscribed to
 
     #you can subscribe user to a plan by
     subscription = cost.setup_user_subscription(request.user, active=False, no_multiple_subscription=True)
@@ -79,25 +82,33 @@ This will expose the following **django-flexible-subscriptions** endpoints with 
 
     #no_multiple_subscription prevents user from being subscribed to more than one plan at time previous plan will be removed
 
-    #After successful user payment you can activate_subscription by using subscription above from setup or
+    #After successful user payment you can activate_subscription by using subscription above or
 
     subscription = UserSubscription.objects.get(user=request.user)
 
-    #or for user with multiple active subscription when no_multipe_sub=False
+    #or for user with multiple active subscription when no_multiple_subscription=False
 
     subscription = UserSubscription.objects.get(user=request.user, cost=cost)
 
-    subscription.activate() #Activate  subscription and user is added to the group on subscription plan
+    subscription.activate() #Activate  subscription and user is added to the group on subscription plan which can use for your views and general       #django permissions
+    
+    if user_subscripton.plan_cost.plan.can_send_message: #or Access json feature list of a subscription plan
+        send_message()
 
     #deactivate subscription. User is removed from Group on subscription
 
     subscription.deactivate()
 
-    #You can also record transaction
+    #You can also record transaction or swap out BaseSubscriptionTransaction in base_models.py to implement or link with a payment model
+    
+    class SubscriptionTransaction(BaseSubscriptionTransaction):
+         cryptocurrency_payments = GenericRelation(CryptoCurrencyPayment)
+         paypal_id = models.OneToOneField(PayPalModel)
+         stripe_id = models.OneToOneField(StripeModel)
 
     subscription.record_transaction()
 
-
+    #Lastly override notifications in notification.py to send emails to user regarding their payment and subscription
 
 
 Testing
