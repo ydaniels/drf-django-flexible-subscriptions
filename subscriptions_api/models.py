@@ -137,9 +137,14 @@ class SubscriptionPlan(models.Model):
             'subscription begins'
         ),
     )
+    sequence = models.IntegerField(
+        default=0,
+        help_text=_(
+            'order by sequence '),
+    )
 
     class Meta:
-        ordering = ('plan_name',)
+        ordering = ('sequence',)
         permissions = (
             ('subscriptions', 'Can interact with subscription details'),
         )
