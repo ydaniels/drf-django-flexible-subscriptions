@@ -40,6 +40,9 @@ class BaseUserSubscription(models.Model):
     reference = models.CharField(
         help_text=_("External System Reference"), max_length=100, null=True, blank=True,
     )
+    quantity = models.IntegerField(
+        help_text=_("Subscription Quantity"), default=1
+    )
     date_billing_start = models.DateTimeField(
         blank=True,
         help_text=_("the date to start billing this subscription"),
