@@ -202,6 +202,11 @@ class PlanCost(models.Model):
         help_text=_('how often the plan is billed (per recurrence unit)'),
         validators=[MinValueValidator(1)],
     )
+    min_subscription_quantity = models.IntegerField(
+        default=1,
+        help_text=_('optional minimum subscription qty  user needs to subscribe to use this cost for usage and tiered base subscription'),
+        validators=[MinValueValidator(1)],
+    )
     recurrence_unit = models.CharField(
         choices=RECURRENCE_UNIT_CHOICES,
         default=MONTH,
