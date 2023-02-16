@@ -95,8 +95,7 @@ class SubscriptionPlan(models.Model):
         blank=True,
         help_text=_('Reference to select list of allowed features for this plan'),
         max_length=100,
-        null=True,
-        unique=True,
+        null=True
     )
     features = models.TextField(
         blank=True,
