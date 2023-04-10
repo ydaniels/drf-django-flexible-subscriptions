@@ -37,6 +37,11 @@ class BaseUserSubscription(models.Model):
         on_delete=models.CASCADE,
         related_name="subscriptions",
     )
+    extra_plan_cost = models.ManyToManyField(
+        "subscriptions_api.PlanCost",
+        help_text=_("Extra plan costs a user can subscribe too at the same time"),
+        related_name="subscriptions",
+    )
     reference = models.CharField(
         help_text=_("External System Reference"), max_length=100, null=True, blank=True,
     )
@@ -84,6 +89,9 @@ class BaseUserSubscription(models.Model):
         )
         abstract = True
 
+    def get_extra_plan_cost_total(self):
+        return sum([cost.cost for cost in self.extra_plan_cost.all() if cost != self.plan_cost])
+
     def record_transaction(self, amount=None, transaction_date=None, paid=False):
         """Records transaction details in SubscriptionTransaction.
             Parameters:
@@ -99,6 +107,7 @@ class BaseUserSubscription(models.Model):
 
         if amount is None:
             amount = self.plan_cost.cost
+        amount = amount + self.get_extra_plan_cost_total() # include the extra of subscription as total subscription
         SubscriptionTransaction = swapper.load_model(
             "subscriptions_api", "SubscriptionTransaction"
         )

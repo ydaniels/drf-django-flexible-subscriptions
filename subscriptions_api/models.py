@@ -308,7 +308,7 @@ class PlanCost(models.Model):
 
     def setup_user_subscription(self, user, active=True, subscription_date=None, no_multiple_subscription=False,
                                 del_multiple_subscription=False, record_transaction=False, mark_transaction_paid=True,
-                                resuse=False):
+                                resuse=False, extra_costs=None):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.
@@ -330,6 +330,8 @@ class PlanCost(models.Model):
                 active=active,
                 cancelled=False
             )
+            if extra_costs:
+                subscription.extra_plan_cost.add(*extra_costs) # Allow user to submit to multiple cost at a go
         # Add user to the proper group
         if record_transaction:
             subscription.record_transaction(transaction_date=subscription_date)
