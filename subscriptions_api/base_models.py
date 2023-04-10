@@ -39,8 +39,7 @@ class BaseUserSubscription(models.Model):
     )
     extra_plan_cost = models.ManyToManyField(
         "subscriptions_api.PlanCost",
-        help_text=_("Extra plan costs a user can subscribe too at the same time"),
-        related_name="subscriptions",
+        help_text=_("Extra plan costs a user can subscribe too at the same time")
     )
     reference = models.CharField(
         help_text=_("External System Reference"), max_length=100, null=True, blank=True,
