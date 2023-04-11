@@ -118,6 +118,14 @@ class SubscriptionPromo(models.Model):
     )
 
 
+    def calculate_discount(self, amount):
+        if self.type == self.FIXED:
+            return  amount - self.amount
+        else:
+            return amount - (self.amount/amount * 100)
+
+
+
 
 
 class SubscriptionPlan(models.Model):
