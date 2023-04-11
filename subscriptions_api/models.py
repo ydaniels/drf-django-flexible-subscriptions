@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth import get_user_model
 from subscriptions_api.app_settings import SETTINGS
 from subscriptions_api.base_models import BaseUserSubscription, BaseSubscriptionTransaction
 
@@ -70,6 +70,54 @@ class PlanTag(models.Model):
 
     def __str__(self):
         return self.tag
+
+class SubscriptionPromo(models.Model):
+    """Details for a subscription plan."""
+    FIXED = 'Fixed'
+    PERCENTAGE = 'Percentage'
+    PROMO_TYPE = [('fixed', FIXED), ('percentage', PERCENTAGE)]
+
+    id = models.UUIDField(
+        default=uuid4,
+        editable=False,
+        primary_key=True,
+        verbose_name='ID',
+    )
+    name = models.CharField(
+        help_text=_('the name of the promo'),
+        max_length=128,
+    )
+    code = models.CharField(
+        help_text=_('the code of the promo'),
+        max_length=128,
+        unique=True
+    )
+    amount = models.DecimalField(
+        decimal_places=2,
+        help_text=_('the promo code amount'),
+        max_digits=19
+    )
+    type = models.CharField(
+        choices=PROMO_TYPE,
+        default=PERCENTAGE,
+        max_length=12,
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text=_('whether this promo is active or not.'),
+    )
+    expires_at = models.DateTimeField(blank=True, null=True)
+
+    customer = models.ForeignKey(
+        get_user_model(),
+        help_text=_('this promo can be use by this user'),
+        on_delete=models.CASCADE,
+        related_name='promo_codes',
+        blank=True,
+        null=True
+    )
+
+
 
 
 class SubscriptionPlan(models.Model):
