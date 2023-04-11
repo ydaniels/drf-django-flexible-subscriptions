@@ -105,8 +105,8 @@ class BaseUserSubscription(models.Model):
             transaction_date = timezone.now()
 
         if amount is None:
-            amount = self.plan_cost.cost
-        amount = amount + self.get_extra_plan_cost_total() # include the extra of subscription as total subscription
+            amount = self.plan_cost.cost + self.get_extra_plan_cost_total()
+             # include the extra of subscription as total subscription
         SubscriptionTransaction = swapper.load_model(
             "subscriptions_api", "SubscriptionTransaction"
         )
