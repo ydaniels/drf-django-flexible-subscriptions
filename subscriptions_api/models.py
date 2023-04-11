@@ -75,7 +75,7 @@ class SubscriptionPromo(models.Model):
     """Details for a subscription plan."""
     FIXED = 'Fixed'
     PERCENTAGE = 'Percentage'
-    PROMO_TYPE = [('fixed', FIXED), ('percentage', PERCENTAGE)]
+    PROMO_TYPE = [(FIXED, FIXED), (PERCENTAGE, PERCENTAGE)]
 
     id = models.UUIDField(
         default=uuid4,
@@ -117,12 +117,14 @@ class SubscriptionPromo(models.Model):
         null=True
     )
 
+    def __str__(self):
+        return '{} {} {} {}'.format(self.name, self.code, self.amount, self.customer)
 
     def calculate_discount(self, amount):
         if self.type == self.FIXED:
-            return  amount - self.amount
+            return   self.amount
         else:
-            return amount - (self.amount/amount * 100)
+            return  (amount * self.amount/100)
 
 
 
