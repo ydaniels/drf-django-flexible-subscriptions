@@ -54,7 +54,7 @@ def activate_default_user_subscription(user):
         cost_obj = PlanCost.objects.get(pk=plan_cost_id)
         cost_obj.setup_user_subscription(user, active=True, no_multiple_subscription=True,
                                          record_transaction=False, mark_transaction_paid=False,
-                                         resuse=True)
+                                         resuse=False)
 
 
 class PlanTag(models.Model):
