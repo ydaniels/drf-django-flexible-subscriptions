@@ -277,6 +277,12 @@ class PlanCost(models.Model):
         null=True,
     )
 
+    multiply_base_cost_quantity = models.BooleanField(
+        default=False,
+        help_text=_('When this cost is used as extra cost to another cost multiply it to the quantity of the cost first instead of adding it directly to the cost.'),
+    )
+
+
     class Meta:
         ordering = ('recurrence_unit', 'recurrence_period', 'cost',)
 
