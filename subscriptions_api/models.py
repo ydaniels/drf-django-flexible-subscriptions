@@ -282,6 +282,10 @@ class PlanCost(models.Model):
         help_text=_('When this cost is used as extra cost to another cost multiply it to the quantity of the cost first instead of adding it directly to the cost.'),
     )
 
+    is_main = models.BooleanField(
+        default=True, help_text=_("whether this cost is the main cost in list of cost"),
+    )
+
 
     class Meta:
         ordering = ('recurrence_unit', 'recurrence_period', 'cost',)
@@ -372,7 +376,7 @@ class PlanCost(models.Model):
 
     def setup_user_subscription(self, user, active=True, subscription_date=None, no_multiple_subscription=False,
                                 del_multiple_subscription=False, record_transaction=False, mark_transaction_paid=True,
-                                resuse=False, extra_costs=None):
+                                resuse=False, is_trialing=False, extra_costs=None):
         """Adds subscription to user and adds them to required group if active.
             Parameters:
                 user (obj): A Django user instance.
@@ -402,7 +406,7 @@ class PlanCost(models.Model):
         if active:
             subscription.activate(subscription_date=subscription_date, mark_transaction_paid=mark_transaction_paid,
                                   no_multiple_subscription=no_multiple_subscription,
-                                  del_multiple_subscription=del_multiple_subscription)
+                                  del_multiple_subscription=del_multiple_subscription, is_trialing=is_trialing)
         return subscription
 
     @property

@@ -74,6 +74,9 @@ class BaseUserSubscription(models.Model):
     active = models.BooleanField(
         default=True, help_text=_("whether this subscription is active or not"),
     )
+    is_trialing = models.BooleanField(
+        default=False, help_text=_("whether this subscription is a on trial"),
+    )
     due = models.BooleanField(
         default=False, help_text=_("whether this subscription is due or not"),
     )
@@ -152,6 +155,7 @@ class BaseUserSubscription(models.Model):
             mark_transaction_paid=True,
             no_multiple_subscription=False,
             del_multiple_subscription=False,
+            is_trialing=False
     ):
         if no_multiple_subscription:
             self.deactivate_previous_subscriptions(
@@ -162,6 +166,7 @@ class BaseUserSubscription(models.Model):
         self.active = True
         self.cancelled = False
         self.due = False
+        self.is_trialing = is_trialing
         self.date_billing_start = current_date
         self.date_billing_end = next_billing_date + timedelta(
             days=self.plan_cost.plan.grace_period
@@ -178,6 +183,7 @@ class BaseUserSubscription(models.Model):
         self.date_billing_last = current_date
         self.cancelled = True
         self.due = False
+        self.is_trialing = False
         self._remove_user_from_group()
         self.save()
         if activate_default:
