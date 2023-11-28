@@ -283,7 +283,7 @@ class PlanCost(models.Model):
     )
 
     is_main = models.BooleanField(
-        default=True, help_text=_("whether this cost is the main cost in list of cost"),
+        default=False, help_text=_("whether this cost is the main cost in list of cost"),
     )
 
 

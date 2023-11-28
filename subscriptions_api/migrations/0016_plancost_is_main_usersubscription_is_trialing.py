@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='plancost',
             name='is_main',
-            field=models.BooleanField(default=True, help_text='whether this cost is the main cost in list of cost'),
+            field=models.BooleanField(default=False, help_text='whether this cost is the main cost in list of cost'),
         ),
         migrations.AddField(
             model_name='usersubscription',
