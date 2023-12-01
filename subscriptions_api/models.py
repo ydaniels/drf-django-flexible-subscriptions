@@ -434,7 +434,7 @@ class PlanCost(models.Model):
         return 0
 
     def __str__(self):
-        return '{} {} {}'.format(self.plan.plan_name, self.display_billing_frequency_text, self.cost)
+        return '{} {} {} | {}'.format(self.plan.plan_name, self.display_billing_frequency_text, self.cost, self.description)
 
 
 class PlanList(models.Model):
