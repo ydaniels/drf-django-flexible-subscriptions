@@ -286,6 +286,8 @@ class PlanCost(models.Model):
         default=False, help_text=_("whether this cost is the main cost in list of cost"),
     )
 
+    description = models.TextField(help_text=_("Optional description for cost"), null=True, blank=True)
+
 
     class Meta:
         ordering = ('recurrence_unit', 'recurrence_period', 'cost',)
