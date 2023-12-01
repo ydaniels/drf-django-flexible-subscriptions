@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='plancost',
             name='description',
-            field=models.TextField(blank=True, help_text='Optional description for cost', null=True),
+            field=models.TextField(default='', blank=True, help_text='Optional description for cost', null=True),
         ),
     ]
