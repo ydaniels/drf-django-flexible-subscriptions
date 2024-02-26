@@ -41,6 +41,7 @@ RECURRENCE_UNIT_CHOICES = (
 class UserSubscription(BaseUserSubscription):
     class Meta:
         swappable = swapper.swappable_setting('subscriptions_api', 'UserSubscription')
+        ordering = ["-active"]
 
 
 class SubscriptionTransaction(BaseSubscriptionTransaction):
