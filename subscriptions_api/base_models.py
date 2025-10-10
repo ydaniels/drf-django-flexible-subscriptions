@@ -127,6 +127,8 @@ class BaseUserSubscription(models.Model):
         Calculate unused balance  of a subscription for a particular period
         """
         current_date = timezone.now()
+        if not self.date_billing_next:
+            return 0
         if self.date_billing_next > current_date:
             days_left = (self.date_billing_next - current_date).days
             return round(days_left * self.plan_cost.daily_cost, 2)
