@@ -11,3 +11,4 @@ admin.site.register(PlanList)
 admin.site.register(PlanListDetail)
 admin.site.register(SubscriptionTransaction)
 admin.site.register(SubscriptionPromo)
+#uninstall admin
