@@ -145,6 +145,8 @@ class BaseUserSubscription(models.Model):
         """
         Calculate used balance  of a subscription for a particular period
         """
+        if not self.date_billing_start:
+            return 0
         current_date = timezone.now()
         if current_date > self.date_billing_start:
             days_used = (current_date - self.date_billing_start).days
