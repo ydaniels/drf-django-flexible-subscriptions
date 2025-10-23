@@ -255,6 +255,13 @@ class PlanCost(models.Model):
         null=True,
         unique=True,
     )
+
+    sequence = models.IntegerField(
+        default=0,
+        help_text=_(
+            'order by sequence '),
+    )
+
     recurrence_period = models.PositiveSmallIntegerField(
         default=1,
         help_text=_('how often the plan is billed (per recurrence unit)'),
@@ -295,7 +302,7 @@ class PlanCost(models.Model):
 
 
     class Meta:
-        ordering = ('recurrence_unit', 'recurrence_period', 'cost',)
+        ordering = ('sequence', 'recurrence_unit', 'recurrence_period', 'cost',)
 
     def activate_default_user_subscription(self, user):
         activate_default_user_subscription(user)
